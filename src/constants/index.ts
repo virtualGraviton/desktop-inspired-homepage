@@ -8,7 +8,7 @@ export const PROFILE = {
   title: 'Backend Developing Engineer',
   avatar: '/avatar.webp',
   location: 'ShenZhen, China',
-  joined: '2020',
+  joined: '2025',
   slogan: 'Building software that feels effortless.',
   bio: 'Focused on elegant, performant interfaces and reliable systems — clean architecture, thoughtful interaction, and just enough craft to make complexity disappear.',
 } as const
