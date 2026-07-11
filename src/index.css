@@ -34,7 +34,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Inset scrollbar track so it clears the window's rounded corners */
+/* Scrollbar sits inside the scrollport (no outer padding gutter). */
 .window-scroll {
   scrollbar-gutter: stable;
   scrollbar-width: thin;

@@ -10,37 +10,30 @@ interface ContentAreaProps {
 export default function ContentArea({ activeNav }: ContentAreaProps) {
   if (activeNav !== 'about') {
     return (
-      <div
-        className="flex-1 min-h-0 flex flex-col"
-        style={{ paddingRight: 8, paddingBottom: 8 }}
-      >
-        <div className="flex-1 flex items-center justify-center rounded-br-[24px]">
-          <p className="text-lg font-medium" style={{ color: INK.muted }}>
-            Coming soon
-          </p>
-        </div>
+      <div className="flex-1 min-h-0 flex items-center justify-center">
+        <p className="text-lg font-medium" style={{ color: INK.muted }}>
+          Coming soon
+        </p>
       </div>
     )
   }
 
   return (
-    <div
-      className="flex-1 min-h-0 flex flex-col"
-      style={{ paddingRight: 8, paddingBottom: 8 }}
+    <motion.div
+      key="about"
+      className="window-scroll flex-1 min-h-0 overflow-y-auto"
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ type: 'spring', duration: 0.45, stiffness: 160 }}
     >
-      <motion.div
-        key="about"
-        className="window-scroll flex-1 min-h-0 overflow-y-auto rounded-br-[24px]"
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ type: 'spring', duration: 0.45, stiffness: 160 }}
+      <div
+        className="mx-auto w-full max-w-[880px]"
+        style={{
+          padding: `${SPACE.pageY}px ${SPACE.pageX}px`,
+          // Extra bottom room so the last section clears the rounded corner
+          paddingBottom: SPACE.pageY + 8,
+        }}
       >
-        <div
-          className="mx-auto w-full max-w-[880px]"
-          style={{
-            padding: `${SPACE.pageY}px ${SPACE.pageX}px`,
-          }}
-        >
         {/* Hero */}
         <header
           className="flex items-start"
@@ -190,7 +183,6 @@ export default function ContentArea({ activeNav }: ContentAreaProps) {
           </div>
         </section>
       </div>
-      </motion.div>
-    </div>
+    </motion.div>
   )
 }

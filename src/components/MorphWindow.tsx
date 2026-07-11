@@ -35,7 +35,7 @@ export default function MorphWindow({
       <motion.div
         className={
           interactive
-            ? 'absolute flex flex-col border overflow-hidden pointer-events-auto'
+            ? 'absolute flex flex-col border overflow-visible pointer-events-auto'
             : 'relative flex flex-col border overflow-hidden pointer-events-auto max-w-[calc(100vw-80px)] max-h-[calc(100vh-80px)]'
         }
         style={{
@@ -125,7 +125,7 @@ export default function MorphWindow({
           ) : (
             <motion.div
               key="desktop-chrome"
-              className="absolute inset-0 flex flex-col overflow-hidden"
+              className="absolute inset-0 flex flex-col overflow-hidden rounded-[16px]"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.4, delay: 0.12 }}
