@@ -15,18 +15,21 @@ export default function LoginCapsule({ phase, onEnter }: LoginCapsuleProps) {
     <div className="absolute inset-0 z-10 flex items-center justify-center">
       <motion.div
         layout
-        className="flex items-center justify-between px-8 overflow-hidden border shadow-2xl"
+        className="grid items-center border shadow-xl overflow-hidden"
         style={{
+          gridTemplateColumns: 'auto 1fr auto',
+          gap: 12,
+          padding: '0 16px',
           background: 'rgba(255,255,255,0.15)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
+          backdropFilter: 'blur(10px)',
+          WebkitBackdropFilter: 'blur(10px)',
           borderColor: 'rgba(255,255,255,0.15)',
-          boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
+          boxShadow: '0 4px 16px rgba(0,0,0,0.3)',
         }}
         animate={
           isMorphing
             ? { width: 1200, height: 760, borderRadius: 32 }
-            : { width: 680, height: 92, borderRadius: 999 }
+            : { width: 420, height: 64, borderRadius: 999 }
         }
         transition={{
           type: 'tween',
@@ -34,56 +37,41 @@ export default function LoginCapsule({ phase, onEnter }: LoginCapsuleProps) {
           duration: 0.5,
         }}
       >
-        {/* Avatar */}
+        {/* Avatar — col 1, auto width */}
         <motion.div
           className="flex items-center justify-center rounded-full bg-white/10 shrink-0"
           animate={
-            isMorphing
-              ? { width: 72, height: 72 }
-              : { width: 64, height: 64 }
+            isMorphing ? { width: 72, height: 72 } : { width: 40, height: 40 }
           }
           transition={{ duration: 0.4 }}
         >
           <User
-            size={isMorphing ? 36 : 32}
+            size={isMorphing ? 36 : 20}
             className="text-white/70"
           />
         </motion.div>
 
-        {/* Name & Title */}
-        <motion.div
-          className="flex flex-col ml-5"
-          animate={isMorphing ? { x: -40 } : { x: 0 }}
+        {/* Name — col 2, 1fr, truly centered */}
+        <motion.span
+          className="font-semibold text-white leading-none text-center"
+          animate={isMorphing ? { fontSize: 24 } : { fontSize: 14 }}
           transition={{ duration: 0.4 }}
         >
-          <motion.span
-            className="font-semibold text-white leading-tight"
-            animate={isMorphing ? { fontSize: 24 } : { fontSize: 20 }}
-            transition={{ duration: 0.4 }}
-          >
-            {PROFILE.name}
-          </motion.span>
-          <motion.span
-            className="text-white/50 leading-tight"
-            animate={isMorphing ? { fontSize: 14 } : { fontSize: 13 }}
-            transition={{ duration: 0.4 }}
-          >
-            {PROFILE.title}
-          </motion.span>
-        </motion.div>
+          {PROFILE.name}
+        </motion.span>
 
-        {/* Login Button */}
+        {/* Login Button — col 3, auto width */}
         {!isMorphing && (
           <motion.button
             onClick={onEnter}
-            className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-white/15 text-white/90 text-sm font-medium border border-white/15 hover:bg-white/25 transition-colors cursor-pointer ml-auto shrink-0"
+            className="flex items-center justify-center rounded-full bg-white/10 text-white/70 hover:bg-white/20 transition-colors cursor-pointer shrink-0"
+            style={{ width: 40, height: 40 }}
             exit={{ opacity: 0, scale: 0.9 }}
             transition={{ duration: 0.2 }}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.97 }}
+            whileHover={{ scale: 1.08 }}
+            whileTap={{ scale: 0.95 }}
           >
-            <span>Enter</span>
-            <ArrowRight size={16} />
+            <ArrowRight size={18} />
           </motion.button>
         )}
       </motion.div>
