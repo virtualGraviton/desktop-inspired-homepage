@@ -19,11 +19,13 @@ export function useLoginAnimation() {
   }, [phase])
 
   const isMorphing = phase === 'morphContent' || phase === 'complete'
+  const isDesktop = phase === 'complete'
   const showGlass = phase === 'idle'
 
   return {
     phase,
     isMorphing,
+    isDesktop,
     showGlass,
     handleLogin,
   }

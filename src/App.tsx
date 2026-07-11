@@ -4,7 +4,7 @@ import MorphWindow from './components/MorphWindow'
 import { useLoginAnimation } from './hooks/useLoginAnimation'
 
 export default function App() {
-  const { isMorphing, showGlass, handleLogin } = useLoginAnimation()
+  const { isMorphing, isDesktop, showGlass, handleLogin } = useLoginAnimation()
 
   return (
     <div className="fixed inset-0 overflow-hidden">
@@ -31,7 +31,11 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      <MorphWindow isMorphing={isMorphing} onEnter={handleLogin} />
+      <MorphWindow
+        isMorphing={isMorphing}
+        isDesktop={isDesktop}
+        onEnter={handleLogin}
+      />
     </div>
   )
 }

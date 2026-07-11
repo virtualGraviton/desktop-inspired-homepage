@@ -5,52 +5,84 @@ import { PROFILE } from '../constants'
 import TitleBar from './desktop/TitleBar'
 import Sidebar from './desktop/Sidebar'
 import ContentArea from './desktop/ContentArea'
+import ResizeHandles from './desktop/ResizeHandles'
+import { useWindowDragResize } from '../hooks/useWindowDragResize'
 import type { NavItem } from '../types'
 
 interface MorphWindowProps {
   isMorphing: boolean
+  isDesktop: boolean
   onEnter: () => void
 }
 
-export default function MorphWindow({ isMorphing, onEnter }: MorphWindowProps) {
+export default function MorphWindow({
+  isMorphing,
+  isDesktop,
+  onEnter,
+}: MorphWindowProps) {
   const [activeNav, setActiveNav] = useState<NavItem>('about')
+  const { rect, interactive, onDragPointerDown, onResizePointerDown } =
+    useWindowDragResize(isDesktop)
 
   return (
-    <div className="fixed inset-0 z-10 flex items-center justify-center pointer-events-none">
+    <div
+      className={
+        interactive
+          ? 'fixed inset-0 z-10 pointer-events-none'
+          : 'fixed inset-0 z-10 flex items-center justify-center pointer-events-none'
+      }
+    >
       <motion.div
-        className="relative flex flex-col border overflow-hidden pointer-events-auto max-w-[calc(100vw-80px)] max-h-[calc(100vh-80px)]"
+        className={
+          interactive
+            ? 'absolute flex flex-col border overflow-hidden pointer-events-auto'
+            : 'relative flex flex-col border overflow-hidden pointer-events-auto max-w-[calc(100vw-80px)] max-h-[calc(100vh-80px)]'
+        }
         style={{
-          // Dark underlay + light glass tint keeps text readable on bright wallpapers
           background:
             'linear-gradient(rgba(255,255,255,0.06), rgba(255,255,255,0.06)), rgba(10,10,14,0.62)',
           backdropFilter: 'blur(18px)',
           WebkitBackdropFilter: 'blur(18px)',
           borderColor: 'rgba(255,255,255,0.18)',
           boxShadow: '0 25px 80px rgba(0,0,0,0.45)',
+          ...(interactive && rect
+            ? {
+                left: rect.x,
+                top: rect.y,
+                width: rect.width,
+                height: rect.height,
+              }
+            : null),
         }}
         initial={false}
         animate={
-          isMorphing
-            ? {
-                width: 1200,
-                height: 760,
-                borderRadius: 32,
-                paddingLeft: 0,
-                paddingRight: 0,
-              }
+          interactive
+            ? { borderRadius: 32, paddingLeft: 0, paddingRight: 0 }
+            : isMorphing
+              ? {
+                  width: 1200,
+                  height: 760,
+                  borderRadius: 32,
+                  paddingLeft: 0,
+                  paddingRight: 0,
+                }
+              : {
+                  width: 440,
+                  height: 64,
+                  borderRadius: 999,
+                  paddingLeft: 14,
+                  paddingRight: 14,
+                }
+        }
+        transition={
+          interactive
+            ? { duration: 0 }
             : {
-                width: 440,
-                height: 64,
-                borderRadius: 999,
-                paddingLeft: 14,
-                paddingRight: 14,
+                type: 'tween',
+                ease: [0.16, 1, 0.3, 1],
+                duration: 0.5,
               }
         }
-        transition={{
-          type: 'tween',
-          ease: [0.16, 1, 0.3, 1],
-          duration: 0.5,
-        }}
       >
         <AnimatePresence mode="popLayout" initial={false}>
           {!isMorphing ? (
@@ -58,7 +90,6 @@ export default function MorphWindow({ isMorphing, onEnter }: MorphWindowProps) {
               key="login-chrome"
               className="grid h-full w-full items-center"
               style={{
-                // Equal side tracks keep the name optically centered
                 gridTemplateColumns: '40px minmax(0, 1fr) 40px',
                 columnGap: 14,
               }}
@@ -99,7 +130,12 @@ export default function MorphWindow({ isMorphing, onEnter }: MorphWindowProps) {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.4, delay: 0.12 }}
             >
-              <TitleBar activeNav={activeNav} />
+              <TitleBar
+                activeNav={activeNav}
+                onDragPointerDown={
+                  interactive ? onDragPointerDown : undefined
+                }
+              />
               <div className="flex flex-1 overflow-hidden min-h-0">
                 <Sidebar activeNav={activeNav} onNavChange={setActiveNav} />
                 <ContentArea activeNav={activeNav} />
@@ -107,6 +143,10 @@ export default function MorphWindow({ isMorphing, onEnter }: MorphWindowProps) {
             </motion.div>
           )}
         </AnimatePresence>
+
+        {interactive && (
+          <ResizeHandles onResizePointerDown={onResizePointerDown} />
+        )}
       </motion.div>
     </div>
   )
