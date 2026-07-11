@@ -5,9 +5,9 @@ export const DEBUG_BLACK_BG = false
 
 export const PROFILE = {
   name: 'Fenglai Zhang',
-  title: 'Software Engineer',
+  title: 'Backend Developing Engineer',
   avatar: '/avatar.webp',
-  location: 'Shanghai, China',
+  location: 'ShenZhen, China',
   joined: '2020',
   slogan: 'Building software that feels effortless.',
   bio: 'Focused on elegant, performant interfaces and reliable systems — clean architecture, thoughtful interaction, and just enough craft to make complexity disappear.',
@@ -63,27 +63,15 @@ export const SKILLS = [
   'Go',
   'Docker',
   'PostgreSQL',
-  'GraphQL',
 ]
 
 export const TIMELINE = [
   {
-    year: '2024 — Present',
-    title: 'Senior Software Engineer',
-    company: 'Company Name',
-    description: 'Building scalable web applications and design systems.',
-  },
-  {
-    year: '2022 — 2024',
-    title: 'Software Engineer',
-    company: 'Previous Company',
-    description: 'Shipped full-stack features across product surfaces.',
-  },
-  {
-    year: '2020 — 2022',
-    title: 'Junior Developer',
-    company: 'First Company',
-    description: 'Started the journey in software engineering.',
+    year: '2025 — Present',
+    title: 'Backend Developing Engineer',
+    company: 'Vivix',
+    description:
+      'Encapsulating foundational inference capabilities and delivering atomic APIs and streaming inference interfaces to business teams and external users.',
   },
 ]
 
