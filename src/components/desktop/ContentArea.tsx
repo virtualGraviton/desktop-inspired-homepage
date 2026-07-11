@@ -10,28 +10,37 @@ interface ContentAreaProps {
 export default function ContentArea({ activeNav }: ContentAreaProps) {
   if (activeNav !== 'about') {
     return (
-      <div className="flex-1 flex items-center justify-center">
-        <p className="text-lg font-medium" style={{ color: INK.muted }}>
-          Coming soon
-        </p>
+      <div
+        className="flex-1 min-h-0 flex flex-col"
+        style={{ paddingRight: 8, paddingBottom: 8 }}
+      >
+        <div className="flex-1 flex items-center justify-center rounded-br-[24px]">
+          <p className="text-lg font-medium" style={{ color: INK.muted }}>
+            Coming soon
+          </p>
+        </div>
       </div>
     )
   }
 
   return (
-    <motion.div
-      key="about"
-      className="flex-1 overflow-y-auto"
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ type: 'spring', duration: 0.45, stiffness: 160 }}
+    <div
+      className="flex-1 min-h-0 flex flex-col"
+      style={{ paddingRight: 8, paddingBottom: 8 }}
     >
-      <div
-        className="mx-auto w-full max-w-[880px]"
-        style={{
-          padding: `${SPACE.pageY}px ${SPACE.pageX}px`,
-        }}
+      <motion.div
+        key="about"
+        className="window-scroll flex-1 min-h-0 overflow-y-auto rounded-br-[24px]"
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ type: 'spring', duration: 0.45, stiffness: 160 }}
       >
+        <div
+          className="mx-auto w-full max-w-[880px]"
+          style={{
+            padding: `${SPACE.pageY}px ${SPACE.pageX}px`,
+          }}
+        >
         {/* Hero */}
         <header
           className="flex items-start"
@@ -178,6 +187,7 @@ export default function ContentArea({ activeNav }: ContentAreaProps) {
           </div>
         </section>
       </div>
-    </motion.div>
+      </motion.div>
+    </div>
   )
 }
