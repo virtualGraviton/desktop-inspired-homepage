@@ -3,7 +3,14 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { RefreshCw } from 'lucide-react'
 import { BACKGROUNDS } from '../../constants'
 
-export default function BackgroundSlideshow() {
+interface BackgroundSlideshowProps {
+  /** Hide the switcher while the window is morphing / open (optional). */
+  showSwitcher?: boolean
+}
+
+export default function BackgroundSlideshow({
+  showSwitcher = true,
+}: BackgroundSlideshowProps) {
   const [index, setIndex] = useState(0)
 
   const nextBg = useCallback(() => {
@@ -24,22 +31,22 @@ export default function BackgroundSlideshow() {
         />
       </AnimatePresence>
 
-      {/* Darken & blur overlay */}
       <div
         className="absolute inset-0 z-[1]"
         style={{
-          backdropFilter: 'brightness(0.8) blur(2px)',
-          WebkitBackdropFilter: 'brightness(0.8) blur(2px)',
+          background: 'rgba(0,0,0,0.25)',
         }}
       />
 
-      <button
-        onClick={nextBg}
-        className="absolute bottom-6 right-6 z-20 rounded-full p-2.5 text-white/40 hover:text-white/80 transition-colors cursor-pointer"
-        aria-label="Change background"
-      >
-        <RefreshCw size={18} />
-      </button>
+      {showSwitcher && (
+        <button
+          onClick={nextBg}
+          className="absolute bottom-6 right-6 z-20 rounded-full p-2.5 text-white/40 hover:text-white/80 transition-colors cursor-pointer"
+          aria-label="Change background"
+        >
+          <RefreshCw size={18} />
+        </button>
+      )}
     </div>
   )
 }
