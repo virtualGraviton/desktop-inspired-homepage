@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
 import { User, FolderGit2, PenLine, ExternalLink, Mail } from 'lucide-react'
-import { NAV_ITEMS } from '../../constants'
+import { NAV_ITEMS, PROFILE } from '../../constants'
 import type { NavItem } from '../../types'
 
 const iconMap: Record<string, React.ComponentType<{ size?: number }>> = {
@@ -28,20 +28,21 @@ export default function Sidebar({ activeNav, onNavChange }: SidebarProps) {
       {/* Profile header */}
       <div className="flex items-center gap-3 px-5 py-6">
         <div
-          className="flex items-center justify-center rounded-full shrink-0"
-          style={{
-            width: 48,
-            height: 48,
-            background: 'rgba(255,255,255,0.1)',
-          }}
+          className="rounded-full shrink-0 overflow-hidden ring-1 ring-white/15"
+          style={{ width: 48, height: 48 }}
         >
-          <User size={24} className="text-white/60" />
+          <img
+            src={PROFILE.avatar}
+            alt={PROFILE.name}
+            className="h-full w-full object-cover"
+            draggable={false}
+          />
         </div>
         <div className="flex flex-col min-w-0">
           <span className="text-white font-semibold text-sm truncate">
-            Fenglai Zhang
+            {PROFILE.name}
           </span>
-          <span className="text-white/40 text-xs">Software Engineer</span>
+          <span className="text-white/40 text-xs">{PROFILE.title}</span>
         </div>
       </div>
 

@@ -3,8 +3,18 @@ import type { NavEntry } from '../types'
 export const PROFILE = {
   name: 'Fenglai Zhang',
   title: 'Software Engineer',
-  avatar: '',
+  avatar: '/avatar.webp',
 } as const
+
+/** Login wallpaper set — kebab-case WebP under /public/backgrounds */
+export const BACKGROUNDS = [
+  '/backgrounds/ayaka.webp',
+  '/backgrounds/mashiro.webp',
+  '/backgrounds/neuro.webp',
+  '/backgrounds/anime-girl-6.webp',
+  '/backgrounds/anime-girl-7.webp',
+  '/backgrounds/anime-girl-8.webp',
+] as const
 
 export const NAV_ITEMS: NavEntry[] = [
   { id: 'about', label: 'About', icon: 'User' },

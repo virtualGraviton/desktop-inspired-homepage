@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { ArrowRight, User } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import { PROFILE } from '../../constants'
 import type { AnimationPhase } from '../../types'
 
@@ -39,22 +39,24 @@ export default function LoginCapsule({ phase, onEnter }: LoginCapsuleProps) {
       >
         {/* Avatar — col 1, auto width */}
         <motion.div
-          className="flex items-center justify-center rounded-full bg-white/10 shrink-0"
+          className="rounded-full shrink-0 overflow-hidden ring-1 ring-white/20"
           animate={
             isMorphing ? { width: 72, height: 72 } : { width: 40, height: 40 }
           }
           transition={{ duration: 0.4 }}
         >
-          <User
-            size={isMorphing ? 36 : 20}
-            className="text-white/70"
+          <img
+            src={PROFILE.avatar}
+            alt={PROFILE.name}
+            className="h-full w-full object-cover"
+            draggable={false}
           />
         </motion.div>
 
         {/* Name — col 2, 1fr, truly centered */}
         <motion.span
           className="font-semibold text-white leading-none text-center"
-          animate={isMorphing ? { fontSize: 24 } : { fontSize: 14 }}
+          animate={isMorphing ? { fontSize: 24 } : { fontSize: 16 }}
           transition={{ duration: 0.4 }}
         >
           {PROFILE.name}
