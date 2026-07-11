@@ -18,12 +18,14 @@ export default function MorphWindow({ isMorphing, onEnter }: MorphWindowProps) {
   return (
     <div className="fixed inset-0 z-10 flex items-center justify-center pointer-events-none">
       <motion.div
-        className="relative flex flex-col border overflow-hidden pointer-events-auto max-w-[92vw] max-h-[88vh]"
+        className="relative flex flex-col border overflow-hidden pointer-events-auto max-w-[calc(100vw-80px)] max-h-[calc(100vh-80px)]"
         style={{
-          background: 'rgba(255,255,255,0.12)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          borderColor: 'rgba(255,255,255,0.15)',
+          // Dark underlay + light glass tint keeps text readable on bright wallpapers
+          background:
+            'linear-gradient(rgba(255,255,255,0.06), rgba(255,255,255,0.06)), rgba(10,10,14,0.62)',
+          backdropFilter: 'blur(18px)',
+          WebkitBackdropFilter: 'blur(18px)',
+          borderColor: 'rgba(255,255,255,0.18)',
           boxShadow: '0 25px 80px rgba(0,0,0,0.45)',
         }}
         initial={false}
@@ -94,7 +96,7 @@ export default function MorphWindow({ isMorphing, onEnter }: MorphWindowProps) {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.4, delay: 0.12 }}
             >
-              <TitleBar />
+              <TitleBar activeNav={activeNav} />
               <div className="flex flex-1 overflow-hidden min-h-0">
                 <Sidebar activeNav={activeNav} onNavChange={setActiveNav} />
                 <ContentArea activeNav={activeNav} />

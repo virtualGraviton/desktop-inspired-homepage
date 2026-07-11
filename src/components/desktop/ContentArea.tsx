@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
-import { User, MapPin, Calendar } from 'lucide-react'
-import { SKILLS, TIMELINE } from '../../constants'
+import { MapPin, Calendar } from 'lucide-react'
+import { PROFILE, SKILLS, TIMELINE, INK, SPACE } from '../../constants'
 import type { NavItem } from '../../types'
 
 interface ContentAreaProps {
@@ -11,7 +11,9 @@ export default function ContentArea({ activeNav }: ContentAreaProps) {
   if (activeNav !== 'about') {
     return (
       <div className="flex-1 flex items-center justify-center">
-        <p className="text-white/30 text-lg">Coming soon</p>
+        <p className="text-lg font-medium" style={{ color: INK.muted }}>
+          Coming soon
+        </p>
       </div>
     )
   }
@@ -19,102 +21,162 @@ export default function ContentArea({ activeNav }: ContentAreaProps) {
   return (
     <motion.div
       key="about"
-      className="flex-1 overflow-y-auto px-10 py-8"
-      initial={{ opacity: 0, y: 20 }}
+      className="flex-1 overflow-y-auto"
+      initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ type: 'spring', duration: 0.45, stiffness: 160 }}
     >
-      {/* Hero */}
-      <div className="flex items-center gap-6 mb-10">
-        <div
-          className="flex items-center justify-center rounded-2xl shrink-0"
-          style={{
-            width: 88,
-            height: 88,
-            background: 'rgba(255,255,255,0.1)',
-          }}
+      <div
+        className="mx-auto w-full max-w-[880px]"
+        style={{
+          padding: `${SPACE.pageY}px ${SPACE.pageX}px`,
+        }}
+      >
+        {/* Hero */}
+        <header
+          className="flex items-start"
+          style={{ gap: SPACE.lg, marginBottom: SPACE.section }}
         >
-          <User size={44} className="text-white/60" />
-        </div>
-        <div>
-          <h1 className="text-2xl font-bold text-white mb-1">Fenglai Zhang</h1>
-          <p className="text-white/50 text-base">Software Engineer</p>
-          <div className="flex items-center gap-4 mt-2 text-white/35 text-sm">
-            <span className="flex items-center gap-1">
-              <MapPin size={14} /> Shanghai, China
-            </span>
-            <span className="flex items-center gap-1">
-              <Calendar size={14} /> Joined 2020
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* Bio */}
-      <p className="text-white/55 text-sm leading-relaxed mb-10 max-w-xl">
-        Passionate about building elegant, performant web applications with modern
-        technologies. Focused on creating seamless user experiences with clean
-        architecture and thoughtful design.
-      </p>
-
-      {/* Skills */}
-      <h2 className="text-white/80 text-sm font-semibold uppercase tracking-wider mb-4">
-        Tech Stack
-      </h2>
-      <div className="flex flex-wrap gap-2 mb-10">
-        {SKILLS.map((skill) => (
-          <span
-            key={skill}
-            className="px-3 py-1.5 rounded-lg text-xs font-medium"
-            style={{
-              background: 'rgba(79,142,247,0.15)',
-              color: '#7eaef8',
-              border: '1px solid rgba(79,142,247,0.25)',
-            }}
-          >
-            {skill}
-          </span>
-        ))}
-      </div>
-
-      {/* Timeline */}
-      <h2 className="text-white/80 text-sm font-semibold uppercase tracking-wider mb-4">
-        Experience
-      </h2>
-      <div className="flex flex-col gap-0">
-        {TIMELINE.map((item, i) => (
           <div
-            key={i}
-            className="relative flex gap-4 pb-7"
-            style={{
-              borderLeft:
-                i < TIMELINE.length - 1
-                  ? '1px solid rgba(255,255,255,0.1)'
-                  : '1px solid transparent',
-            }}
+            className="rounded-[28px] shrink-0 overflow-hidden ring-1 ring-white/20 shadow-lg"
+            style={{ width: 104, height: 104 }}
           >
-            <div
-              className="absolute rounded-full"
-              style={{
-                left: -4,
-                top: 4,
-                width: 7,
-                height: 7,
-                background: '#4F8EF7',
-              }}
+            <img
+              src={PROFILE.avatar}
+              alt={PROFILE.name}
+              className="h-full w-full object-cover"
+              draggable={false}
             />
-            <div className="pl-5">
-              <span className="text-white/35 text-xs">{item.year}</span>
-              <h3 className="text-white/90 text-sm font-semibold mt-0.5">
-                {item.title}
-              </h3>
-              <p className="text-white/40 text-xs mt-0.5">{item.company}</p>
-              <p className="text-white/45 text-xs mt-1 leading-relaxed max-w-md">
-                {item.description}
-              </p>
+          </div>
+
+          <div className="min-w-0" style={{ paddingTop: SPACE.xs }}>
+            <h1
+              className="font-bold tracking-tight"
+              style={{
+                color: INK.primary,
+                fontSize: 40,
+                lineHeight: 1.15,
+                marginBottom: 12,
+              }}
+            >
+              {PROFILE.name}
+            </h1>
+            <p
+              className="text-lg"
+              style={{ color: INK.secondary, marginBottom: 10 }}
+            >
+              {PROFILE.title}
+            </p>
+            <div
+              className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm"
+              style={{ color: INK.muted }}
+            >
+              <span className="flex items-center gap-1.5">
+                <MapPin size={14} />
+                {PROFILE.location}
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Calendar size={14} />
+                Joined {PROFILE.joined}
+              </span>
             </div>
           </div>
-        ))}
+        </header>
+
+        {/* Slogan + bio */}
+        <section style={{ marginBottom: SPACE.section }}>
+          <p
+            className="text-xl font-medium leading-snug"
+            style={{ color: INK.primary, marginBottom: SPACE.md }}
+          >
+            {PROFILE.slogan}
+          </p>
+          <p
+            className="text-[15px] leading-relaxed max-w-2xl"
+            style={{ color: INK.secondary }}
+          >
+            {PROFILE.bio}
+          </p>
+        </section>
+
+        {/* Skills */}
+        <section style={{ marginBottom: SPACE.section }}>
+          <h2
+            className="text-xs font-semibold uppercase tracking-[0.16em]"
+            style={{ color: INK.muted, marginBottom: SPACE.md }}
+          >
+            Tech Stack
+          </h2>
+          <div className="flex flex-wrap" style={{ gap: 12 }}>
+            {SKILLS.map((skill) => (
+              <motion.span
+                key={skill}
+                className="inline-flex items-center rounded-lg text-sm font-medium cursor-default"
+                style={{
+                  height: 32,
+                  padding: '0 16px',
+                  background: 'rgba(79,142,247,0.18)',
+                  color: INK.accentSoft,
+                  border: '1px solid rgba(147,197,253,0.35)',
+                }}
+                whileHover={{ scale: 1.04 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+              >
+                {skill}
+              </motion.span>
+            ))}
+          </div>
+        </section>
+
+        {/* Experience cards */}
+        <section>
+          <h2
+            className="text-xs font-semibold uppercase tracking-[0.16em]"
+            style={{ color: INK.muted, marginBottom: SPACE.md }}
+          >
+            Experience
+          </h2>
+          <div
+            className="grid grid-cols-1 md:grid-cols-3"
+            style={{ gap: SPACE.lg }}
+          >
+            {TIMELINE.map((item) => (
+              <article
+                key={item.title}
+                className="rounded-2xl flex flex-col"
+                style={{
+                  minHeight: 200,
+                  padding: SPACE.lg,
+                  gap: SPACE.sm,
+                  background: 'rgba(255,255,255,0.06)',
+                  border: '1px solid rgba(255,255,255,0.14)',
+                }}
+              >
+                <span
+                  className="text-xs font-mono"
+                  style={{ color: INK.accent }}
+                >
+                  {item.year}
+                </span>
+                <h3
+                  className="text-[15px] font-semibold leading-snug"
+                  style={{ color: INK.primary }}
+                >
+                  {item.title}
+                </h3>
+                <p className="text-sm" style={{ color: INK.muted }}>
+                  {item.company}
+                </p>
+                <p
+                  className="text-sm leading-relaxed"
+                  style={{ color: INK.secondary, marginTop: 'auto' }}
+                >
+                  {item.description}
+                </p>
+              </article>
+            ))}
+          </div>
+        </section>
       </div>
     </motion.div>
   )

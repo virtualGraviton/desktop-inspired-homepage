@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { RefreshCw } from 'lucide-react'
-import { BACKGROUNDS } from '../../constants'
+import { BACKGROUNDS, DEBUG_BLACK_BG } from '../../constants'
 
 interface BackgroundSlideshowProps {
   /** Hide the switcher while the window is morphing / open (optional). */
@@ -16,6 +16,10 @@ export default function BackgroundSlideshow({
   const nextBg = useCallback(() => {
     setIndex((prev) => (prev + 1) % BACKGROUNDS.length)
   }, [])
+
+  if (DEBUG_BLACK_BG) {
+    return <div className="fixed inset-0 z-0 bg-black" />
+  }
 
   return (
     <div className="fixed inset-0 z-0">
