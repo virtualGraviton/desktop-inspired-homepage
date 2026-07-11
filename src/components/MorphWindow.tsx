@@ -74,7 +74,10 @@ export default function MorphWindow({ isMorphing, onEnter }: MorphWindowProps) {
                 />
               </div>
 
-              <span className="min-w-0 font-semibold text-white text-base leading-none text-center truncate">
+              <span
+                className="min-w-0 font-semibold text-white text-center truncate"
+                style={{ fontSize: 18, lineHeight: '24px' }}
+              >
                 {PROFILE.name}
               </span>
 
