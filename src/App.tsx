@@ -4,7 +4,7 @@ import MorphWindow from './components/MorphWindow'
 import { useLoginAnimation } from './hooks/useLoginAnimation'
 
 export default function App() {
-  const { phase, isMorphing, showGlass, handleLogin } = useLoginAnimation()
+  const { isMorphing, showGlass, handleLogin } = useLoginAnimation()
 
   return (
     <div className="fixed inset-0 overflow-hidden">
@@ -21,13 +21,12 @@ export default function App() {
               WebkitBackdropFilter: 'blur(40px) brightness(90%)',
             }}
             initial={{ opacity: 1 }}
-            animate={
-              phase === 'fadeGlass'
-                ? { opacity: 0, backdropFilter: 'blur(0px) brightness(100%)' }
-                : { opacity: 1, backdropFilter: 'blur(40px) brightness(90%)' }
-            }
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
+            animate={{ opacity: 1 }}
+            exit={{
+              opacity: 0,
+              backdropFilter: 'blur(0px) brightness(100%)',
+            }}
+            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
           />
         )}
       </AnimatePresence>
