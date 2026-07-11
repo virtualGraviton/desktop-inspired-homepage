@@ -146,8 +146,11 @@ export default function ContentArea({ activeNav }: ContentAreaProps) {
             Experience
           </h2>
           <div
-            className="grid grid-cols-1 md:grid-cols-3"
-            style={{ gap: SPACE.lg }}
+            className="grid"
+            style={{
+              gap: SPACE.lg,
+              gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+            }}
           >
             {TIMELINE.map((item) => (
               <article

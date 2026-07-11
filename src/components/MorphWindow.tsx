@@ -57,12 +57,12 @@ export default function MorphWindow({
         initial={false}
         animate={
           interactive
-            ? { borderRadius: 32, paddingLeft: 0, paddingRight: 0 }
+            ? { borderRadius: 16, paddingLeft: 0, paddingRight: 0 }
             : isMorphing
               ? {
                   width: 1200,
                   height: 760,
-                  borderRadius: 32,
+                  borderRadius: 16,
                   paddingLeft: 0,
                   paddingRight: 0,
                 }
