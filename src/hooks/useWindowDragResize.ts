@@ -1,4 +1,4 @@
-import { useCallback, useLayoutEffect, useEffect, useRef, useState } from 'react'
+import { useCallback, useLayoutEffect, useRef, useState } from 'react'
 
 export type ResizeDir = 'n' | 's' | 'e' | 'w' | 'ne' | 'nw' | 'se' | 'sw'
 
@@ -11,32 +11,15 @@ export interface WindowRect {
 
 const DEFAULT_W = 1200
 const DEFAULT_H = 760
-const MIN_W = 720
-const MIN_H = 480
-const MARGIN = 40
-
-function clampRect(rect: WindowRect): WindowRect {
-  const maxW = Math.max(MIN_W, window.innerWidth - MARGIN * 2)
-  const maxH = Math.max(MIN_H, window.innerHeight - MARGIN * 2)
-  const width = Math.min(Math.max(rect.width, MIN_W), maxW)
-  const height = Math.min(Math.max(rect.height, MIN_H), maxH)
-  const x = Math.min(Math.max(rect.x, MARGIN), window.innerWidth - width - MARGIN)
-  const y = Math.min(
-    Math.max(rect.y, MARGIN),
-    window.innerHeight - height - MARGIN,
-  )
-  return { x, y, width, height }
-}
+const MIN_W = 480
 
 function centeredDefault(): WindowRect {
-  const width = Math.min(DEFAULT_W, window.innerWidth - MARGIN * 2)
-  const height = Math.min(DEFAULT_H, window.innerHeight - MARGIN * 2)
-  return clampRect({
-    x: (window.innerWidth - width) / 2,
-    y: (window.innerHeight - height) / 2,
-    width,
-    height,
-  })
+  return {
+    x: (window.innerWidth - DEFAULT_W) / 2,
+    y: (window.innerHeight - DEFAULT_H) / 2,
+    width: DEFAULT_W,
+    height: DEFAULT_H,
+  }
 }
 
 export function useWindowDragResize(enabled: boolean) {
@@ -55,16 +38,6 @@ export function useWindowDragResize(enabled: boolean) {
     }
   }, [enabled, rect])
 
-  useEffect(() => {
-    if (!enabled) return
-
-    const onResize = () => {
-      setRect((prev) => (prev ? clampRect(prev) : prev))
-    }
-    window.addEventListener('resize', onResize)
-    return () => window.removeEventListener('resize', onResize)
-  }, [enabled])
-
   const onPointerMove = useCallback((e: PointerEvent) => {
     const drag = dragRef.current
     if (!drag) return
@@ -74,7 +47,7 @@ export function useWindowDragResize(enabled: boolean) {
     const o = drag.origin
 
     if (drag.mode === 'move') {
-      setRect(clampRect({ ...o, x: o.x + dx, y: o.y + dy }))
+      setRect({ ...o, x: o.x + dx, y: o.y + dy })
       return
     }
 
@@ -92,17 +65,12 @@ export function useWindowDragResize(enabled: boolean) {
       y = o.y + dy
     }
 
-    // Keep opposite edge anchored when hitting min size
     if (width < MIN_W) {
       if (dir.includes('w')) x = o.x + o.width - MIN_W
       width = MIN_W
     }
-    if (height < MIN_H) {
-      if (dir.includes('n')) y = o.y + o.height - MIN_H
-      height = MIN_H
-    }
 
-    setRect(clampRect({ x, y, width, height }))
+    setRect({ x, y, width, height })
   }, [])
 
   const onPointerUp = useCallback(() => {
