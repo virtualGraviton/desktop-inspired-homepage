@@ -83,6 +83,9 @@ export default function Sidebar({ activeNav, onNavChange }: SidebarProps) {
             {group.items.map((item) => {
               const Icon = iconMap[item.icon]
               const isActive = activeNav === item.id
+              const activeBg = 'rgba(255,255,255,0.12)'
+              const idleBg = 'rgba(255,255,255,0)'
+              const hoverBg = 'rgba(255,255,255,0.06)'
 
               return (
                 <motion.button
@@ -93,16 +96,18 @@ export default function Sidebar({ activeNav, onNavChange }: SidebarProps) {
                     height: 40,
                     paddingLeft: 12,
                     paddingRight: 12,
-                    background: isActive
-                      ? 'rgba(255,255,255,0.12)'
-                      : 'transparent',
                     color: isActive ? INK.primary : INK.secondary,
+                  }}
+                  // Framer must own backgroundColor via animate; mixing style.background
+                  // with whileHover.backgroundColor leaves a stale inline value after hover.
+                  initial={false}
+                  animate={{
+                    backgroundColor: isActive ? activeBg : idleBg,
+                    x: 0,
                   }}
                   whileHover={{
                     x: 3,
-                    backgroundColor: isActive
-                      ? 'rgba(255,255,255,0.12)'
-                      : 'rgba(255,255,255,0.06)',
+                    backgroundColor: isActive ? activeBg : hoverBg,
                   }}
                   transition={{ type: 'spring', stiffness: 300, damping: 22 }}
                 >
