@@ -16,6 +16,8 @@ interface WindowFrameProps {
   onMaximize: () => void
   onRectChange: (rect: WindowRect) => void
   onHoverChange: (hovered: boolean) => void
+  /** Skip slide-up enter (login morph already expanded into this window). */
+  skipEnter?: boolean
 }
 
 const LAYOUT_MS = 450
@@ -28,6 +30,7 @@ export default function WindowFrame({
   onMaximize,
   onRectChange,
   onHoverChange,
+  skipEnter = false,
 }: WindowFrameProps) {
   const [activeNav, setActiveNav] = useState<NavItem>('about')
   const floating = win.mode === 'floating'
@@ -36,6 +39,9 @@ export default function WindowFrame({
     onRectChange,
     floating,
   )
+
+  // Capture once — remount after dock reopen should animate again.
+  const skipEnterRef = useRef(skipEnter)
 
   // Detect mode change during render (before paint) so Framer gets
   // duration > 0 on the same frame the new rect arrives — avoids the
@@ -70,7 +76,11 @@ export default function WindowFrame({
           ? '0 28px 90px rgba(0,0,0,0.65), 0 0 0 1px rgba(56,189,248,0.25)'
           : '0 12px 40px rgba(0,0,0,0.4)',
       }}
-      initial={{ y: 56, opacity: 0, scale: 0.96 }}
+      initial={
+        skipEnterRef.current
+          ? false
+          : { y: 56, opacity: 0, scale: 0.96 }
+      }
       animate={{
         y: 0,
         opacity: 1,
@@ -82,10 +92,16 @@ export default function WindowFrame({
       }}
       exit={{ y: 56, opacity: 0, scale: 0.98 }}
       transition={{
-        y: { duration: 0.3, ease: DESKTOP_EASE },
-        opacity: { duration: 0.3, ease: DESKTOP_EASE },
+        y: {
+          duration: skipEnterRef.current ? 0 : 0.3,
+          ease: DESKTOP_EASE,
+        },
+        opacity: {
+          duration: skipEnterRef.current ? 0 : 0.3,
+          ease: DESKTOP_EASE,
+        },
         scale: {
-          duration: sizeDuration > 0 ? sizeDuration : 0.3,
+          duration: sizeDuration > 0 ? sizeDuration : skipEnterRef.current ? 0 : 0.3,
           ease: DESKTOP_EASE,
         },
         left: { duration: sizeDuration, ease: DESKTOP_EASE },

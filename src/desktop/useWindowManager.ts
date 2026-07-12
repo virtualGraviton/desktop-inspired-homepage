@@ -1,26 +1,11 @@
 import { useCallback, useMemo, useRef, useState } from 'react'
-import {
-  DEFAULT_WINDOW_H,
-  DEFAULT_WINDOW_W,
-  HOMEPAGE_WINDOW_ID,
-  TOOLBAR_RESERVED_H,
-} from './constants'
+import { HOMEPAGE_WINDOW_ID, TOOLBAR_RESERVED_H } from './constants'
+import { getCenteredFloatingRect } from './geometry'
 import { createRootLeaf, getWorkArea, insetRect, layoutTileTree } from './tileLayout'
 import type { DesktopWindow, TileNode, WindowRect } from './types'
 
-function centeredFloating(): WindowRect {
-  const w = Math.min(DEFAULT_WINDOW_W, window.innerWidth - 80)
-  const h = Math.min(DEFAULT_WINDOW_H, window.innerHeight - TOOLBAR_RESERVED_H - 80)
-  return {
-    x: (window.innerWidth - w) / 2,
-    y: TOOLBAR_RESERVED_H + (window.innerHeight - TOOLBAR_RESERVED_H - h) / 2,
-    width: w,
-    height: h,
-  }
-}
-
 function createHomepageWindow(): DesktopWindow {
-  const rect = centeredFloating()
+  const rect = getCenteredFloatingRect()
   return {
     id: HOMEPAGE_WINDOW_ID,
     appId: 'homepage',

@@ -7,15 +7,16 @@ import { useWallpaper } from './desktop/useWallpaper'
 
 export default function App() {
   const { isMorphing, isDesktop, showGlass, handleLogin } = useLoginAnimation()
-  const loginWallpaper = useWallpaper()
+  // Lifted so login → desktop keeps the same wallpaper instance (no remount flash).
+  const wallpaper = useWallpaper()
 
   if (isDesktop) {
-    return <DesktopShell />
+    return <DesktopShell wallpaper={wallpaper} seamlessBoot />
   }
 
   return (
     <div className="fixed inset-0 overflow-hidden">
-      <WallpaperLayer wallpaper={loginWallpaper} />
+      <WallpaperLayer wallpaper={wallpaper} />
 
       <AnimatePresence>
         {showGlass && (

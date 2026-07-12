@@ -1,45 +1,60 @@
+import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
 import { PROFILE } from '../../constants'
+import TitleBar from '../desktop/TitleBar'
+import HomepageApp from '../desktop/HomepageApp'
+import { WINDOW_RADIUS } from '../../desktop/constants'
+import {
+  getCenteredFloatingRect,
+  getLoginCapsuleRect,
+} from '../../desktop/geometry'
+import type { WindowRect } from '../../desktop/types'
+import type { NavItem } from '../../types'
 
 interface LoginMorphProps {
   isMorphing: boolean
   onEnter: () => void
 }
 
-/** Login capsule → morph preview; desktop chrome lives in DesktopShell after complete. */
+/** Login capsule → expand with real chrome; DesktopShell takes over without a second enter anim. */
 export default function LoginMorph({ isMorphing, onEnter }: LoginMorphProps) {
+  const [activeNav, setActiveNav] = useState<NavItem>('about')
+  const [capsule] = useState<WindowRect>(() => getLoginCapsuleRect())
+  const [target, setTarget] = useState<WindowRect>(() =>
+    getCenteredFloatingRect(),
+  )
+
+  useEffect(() => {
+    if (!isMorphing) return
+    setTarget(getCenteredFloatingRect())
+  }, [isMorphing])
+
+  const rect = isMorphing ? target : capsule
+
   return (
-    <div className="fixed inset-0 z-10 flex items-center justify-center pointer-events-none">
+    <div className="fixed inset-0 z-10 pointer-events-none">
       <motion.div
-        className="relative flex flex-col border overflow-hidden pointer-events-auto max-w-[calc(100vw-80px)] max-h-[calc(100vh-80px)]"
+        className="absolute flex flex-col border overflow-hidden pointer-events-auto"
         style={{
           background:
-            'linear-gradient(rgba(255,255,255,0.06), rgba(255,255,255,0.06)), rgba(10,10,14,0.62)',
+            'linear-gradient(rgba(255,255,255,0.06), rgba(255,255,255,0.06)), rgba(10,10,14,0.72)',
           backdropFilter: 'blur(18px)',
           WebkitBackdropFilter: 'blur(18px)',
-          borderColor: 'rgba(56,189,248,0.55)',
-          borderWidth: 2,
+          borderColor: 'rgba(56,189,248,0.9)',
+          borderWidth: 2.5,
           boxShadow: '0 25px 80px rgba(0,0,0,0.45)',
         }}
         initial={false}
-        animate={
-          isMorphing
-            ? {
-                width: 1200,
-                height: 760,
-                borderRadius: 12,
-                paddingLeft: 0,
-                paddingRight: 0,
-              }
-            : {
-                width: 440,
-                height: 64,
-                borderRadius: 999,
-                paddingLeft: 14,
-                paddingRight: 14,
-              }
-        }
+        animate={{
+          left: rect.x,
+          top: rect.y,
+          width: rect.width,
+          height: rect.height,
+          borderRadius: isMorphing ? WINDOW_RADIUS : 999,
+          paddingLeft: isMorphing ? 0 : 14,
+          paddingRight: isMorphing ? 0 : 14,
+        }}
         transition={{
           type: 'tween',
           ease: [0.16, 1, 0.3, 1],
@@ -56,7 +71,7 @@ export default function LoginMorph({ isMorphing, onEnter }: LoginMorphProps) {
                 columnGap: 14,
               }}
               initial={{ opacity: 1 }}
-              exit={{ opacity: 0, transition: { duration: 0.18 } }}
+              exit={{ opacity: 0, transition: { duration: 0.15 } }}
             >
               <div className="h-10 w-10 justify-self-start rounded-full overflow-hidden ring-1 ring-white/20">
                 <img
@@ -86,15 +101,15 @@ export default function LoginMorph({ isMorphing, onEnter }: LoginMorphProps) {
             </motion.div>
           ) : (
             <motion.div
-              key="morph-placeholder"
-              className="absolute inset-0 flex items-center justify-center"
+              key="desktop-preview"
+              className="absolute inset-0 flex flex-col overflow-hidden"
+              style={{ borderRadius: WINDOW_RADIUS - 1 }}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.3 }}
+              transition={{ duration: 0.28, delay: 0.08 }}
             >
-              <span className="text-white/40 text-sm font-mono">
-                opening homepage…
-              </span>
+              <TitleBar activeNav={activeNav} focused />
+              <HomepageApp activeNav={activeNav} onNavChange={setActiveNav} />
             </motion.div>
           )}
         </AnimatePresence>

@@ -1,20 +1,29 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import WallpaperLayer from './WallpaperLayer'
 import ToolBar from './ToolBar'
 import Dock from './Dock'
 import WindowFrame from './WindowFrame'
 import { useWindowManager } from '../../desktop/useWindowManager'
-import { useWallpaper } from '../../desktop/useWallpaper'
 import { useAltWindowGestures } from '../../desktop/useAltWindowGestures'
 import { HOMEPAGE_WINDOW_ID } from '../../desktop/constants'
-import type { RevealOrigin } from '../../desktop/useWallpaper'
+import type { RevealOrigin, WallpaperApi } from '../../desktop/useWallpaper'
 
-export default function DesktopShell() {
+interface DesktopShellProps {
+  wallpaper: WallpaperApi
+  /** Coming from login morph — don't replay window enter animation. */
+  seamlessBoot?: boolean
+}
+
+export default function DesktopShell({
+  wallpaper,
+  seamlessBoot = false,
+}: DesktopShellProps) {
   const wm = useWindowManager()
-  const wallpaper = useWallpaper()
   const [hoveredId, setHoveredId] = useState<string | null>(null)
   const [theme, setTheme] = useState<'dark' | 'light'>('dark')
+  /** Cleared on first close so dock-reopen still gets enter anim */
+  const loginHandoff = useRef(seamlessBoot)
 
   useAltWindowGestures({
     enabled: true,
@@ -27,6 +36,11 @@ export default function DesktopShell() {
   })
 
   const homepage = wm.windows.find((w) => w.id === HOMEPAGE_WINDOW_ID)
+
+  const closeWindow = (id: string) => {
+    loginHandoff.current = false
+    wm.close(id)
+  }
 
   return (
     <div className="fixed inset-0 overflow-hidden" data-theme={theme}>
@@ -48,9 +62,12 @@ export default function DesktopShell() {
             <WindowFrame
               key={win.id}
               win={win}
+              skipEnter={
+                loginHandoff.current && win.id === HOMEPAGE_WINDOW_ID
+              }
               onFocus={() => wm.focus(win.id)}
-              onClose={() => wm.close(win.id)}
-              onMinimize={() => wm.close(win.id)}
+              onClose={() => closeWindow(win.id)}
+              onMinimize={() => closeWindow(win.id)}
               onMaximize={() => wm.toggleTile(win.id)}
               onRectChange={(rect) => wm.setRect(win.id, rect)}
               onHoverChange={(hovered) =>
