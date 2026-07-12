@@ -83,3 +83,11 @@ body {
   --shell-ink: #f4f4f5;
   --shell-muted: #a1a1aa;
 }
+
+.toolbar-pill--interactive:hover:not([data-active='true']) {
+  background: var(--pill-bg-hover) !important;
+}
+
+.toolbar-pill--interactive:active {
+  border-color: var(--pill-border-active) !important;
+}

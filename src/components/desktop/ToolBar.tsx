@@ -49,13 +49,18 @@ function Pill({
     padding: square ? 0 : '0 12px',
     background: 'var(--pill-bg)',
     color: 'var(--pill-fg)',
-    borderColor: 'var(--pill-border)',
+    border: '1px solid var(--pill-border)',
     backdropFilter: 'blur(16px)',
     boxSizing: 'border-box',
+    outline: 'none',
+    WebkitTapHighlightColor: 'transparent',
+    transition: 'background-color 0.15s ease, border-color 0.15s ease',
   }
 
-  const cls = `inline-flex items-center justify-center gap-1.5 rounded-full border text-[12px] leading-none shrink-0 overflow-hidden ${
-    onClick ? 'cursor-pointer hover:brightness-110' : ''
+  const cls = `toolbar-pill inline-flex items-center justify-center gap-1.5 rounded-full text-[12px] leading-none shrink-0 overflow-hidden appearance-none ${
+    onClick
+      ? 'toolbar-pill--interactive cursor-pointer focus:outline-none focus-visible:outline-none'
+      : ''
   } ${className}`
 
   if (onClick) {
@@ -64,6 +69,7 @@ function Pill({
         type="button"
         title={title}
         onClick={onClick}
+        onMouseDown={(e) => e.preventDefault()}
         className={cls}
         style={style}
       >
@@ -131,12 +137,20 @@ export default function ToolBar({
             theme === 'light'
               ? 'rgba(255,255,255,0.82)'
               : 'rgba(10,10,14,0.78)',
+          ['--pill-bg-hover' as string]:
+            theme === 'light'
+              ? 'rgba(255,255,255,0.95)'
+              : 'rgba(255,255,255,0.14)',
           ['--pill-fg' as string]:
             theme === 'light' ? '#18181b' : 'rgba(244,244,245,0.9)',
           ['--pill-border' as string]:
             theme === 'light'
               ? 'rgba(0,0,0,0.08)'
               : 'rgba(255,255,255,0.12)',
+          ['--pill-border-active' as string]:
+            theme === 'light'
+              ? 'rgba(59,130,246,0.85)'
+              : 'rgba(125,211,252,0.95)',
         } as React.CSSProperties
       }
     >
@@ -147,12 +161,15 @@ export default function ToolBar({
               key={n}
               type="button"
               onClick={() => setWorkspace(n)}
-              className="flex items-center justify-center rounded-full text-[11px] font-semibold border-0 cursor-pointer shrink-0"
+              onMouseDown={(e) => e.preventDefault()}
+              data-active={workspace === n ? 'true' : undefined}
+              className="toolbar-pill--interactive flex items-center justify-center rounded-full text-[11px] font-semibold border border-transparent cursor-pointer shrink-0 outline-none focus:outline-none appearance-none"
               style={{
                 width: 24,
                 height: 24,
                 background: workspace === n ? '#93c5fd' : 'transparent',
                 color: workspace === n ? '#0f1115' : 'inherit',
+                transition: 'background-color 0.15s ease, border-color 0.15s ease',
               }}
             >
               {n}
