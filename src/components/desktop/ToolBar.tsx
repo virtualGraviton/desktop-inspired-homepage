@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react'
-import { motion } from 'framer-motion'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
 import {
   Battery,
   Bell,
@@ -15,6 +15,23 @@ import {
 } from 'lucide-react'
 import { DESKTOP_EASE, TOOLBAR_RESERVED_H } from '../../desktop/constants'
 import type { RevealOrigin } from '../../desktop/useWallpaper'
+
+/** Build a Sun–Sat month grid; leading/trailing empties are null. */
+function buildMonthCells(date: Date): (number | null)[] {
+  const year = date.getFullYear()
+  const month = date.getMonth()
+  const daysInMonth = new Date(year, month + 1, 0).getDate()
+  const startWeekday = new Date(year, month, 1).getDay()
+  const cells: (number | null)[] = Array.from(
+    { length: startWeekday },
+    () => null,
+  )
+  for (let d = 1; d <= daysInMonth; d++) cells.push(d)
+  while (cells.length % 7 !== 0) cells.push(null)
+  return cells
+}
+
+const WEEKDAYS = ['日', '一', '二', '三', '四', '五', '六'] as const
 
 /** Shared chrome size for every toolbar control */
 const PILL_H = 32
@@ -110,19 +127,29 @@ export default function ToolBar({
     return () => document.removeEventListener('mousedown', onDoc)
   }, [calendarOpen])
 
-  const timeLabel = now.toLocaleString(undefined, {
-    weekday: 'short',
-    month: 'short',
+  const timeLabel = now.toLocaleString('zh-CN', {
+    month: 'numeric',
     day: 'numeric',
+    weekday: 'short',
     hour: '2-digit',
     minute: '2-digit',
+    hour12: false,
   })
 
-  const precise = now.toLocaleTimeString(undefined, {
+  const precise = now.toLocaleTimeString('zh-CN', {
     hour: '2-digit',
     minute: '2-digit',
     second: '2-digit',
+    hour12: false,
   })
+
+  const year = now.getFullYear()
+  const month = now.getMonth()
+  const today = now.getDate()
+  const monthCells = useMemo(
+    () => buildMonthCells(new Date(year, month, 1)),
+    [year, month],
+  )
 
   return (
     <motion.div
@@ -203,55 +230,83 @@ export default function ToolBar({
             {timeLabel}
           </span>
         </Pill>
-        {calendarOpen && (
-          <div
-            className="absolute top-full left-1/2 mt-2 w-64 -translate-x-1/2 rounded-2xl border p-4 shadow-2xl"
-            style={{
-              background:
-                theme === 'light'
-                  ? 'rgba(255,255,255,0.95)'
-                  : 'rgba(12,12,16,0.92)',
-              borderColor: 'var(--pill-border)',
-              color: 'var(--pill-fg)',
-              backdropFilter: 'blur(20px)',
-            }}
-          >
-            <div className="text-center font-mono text-2xl mb-3">{precise}</div>
-            <div className="text-center text-sm mb-3" style={{ opacity: 0.65 }}>
-              {now.toLocaleDateString(undefined, {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-              })}
-            </div>
-            <div
-              className="grid grid-cols-7 gap-1 text-center text-[10px] mb-1"
-              style={{ opacity: 0.45 }}
+        <AnimatePresence>
+          {calendarOpen && (
+            <motion.div
+              className="absolute top-full left-1/2 z-50 w-[280px] -translate-x-1/2 border shadow-2xl origin-top"
+              style={{
+                marginTop: 10,
+                padding: '20px 20px 18px',
+                borderRadius: 16,
+                background:
+                  theme === 'light'
+                    ? 'rgba(255,255,255,0.96)'
+                    : 'rgba(12,12,16,0.94)',
+                borderColor: 'var(--pill-border)',
+                color: 'var(--pill-fg)',
+                backdropFilter: 'blur(20px)',
+              }}
+              initial={{ opacity: 0, y: -10, scale: 0.94 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -8, scale: 0.96 }}
+              transition={{ duration: 0.28, ease: DESKTOP_EASE }}
             >
-              {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((d) => (
-                <span key={d}>{d}</span>
-              ))}
-            </div>
-            <div className="grid grid-cols-7 gap-1 text-center text-xs">
-              {Array.from({ length: 28 }, (_, i) => i + 1).map((d) => (
-                <span
-                  key={d}
-                  className="rounded-md py-1"
-                  style={{
-                    background:
-                      d === now.getDate()
-                        ? 'rgba(147,197,253,0.25)'
-                        : 'transparent',
-                    color: d === now.getDate() ? '#3b82f6' : undefined,
-                  }}
-                >
-                  {d}
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
+              <div className="text-center font-mono text-[28px] leading-none tracking-tight mb-3">
+                {precise}
+              </div>
+              <div
+                className="text-center text-[13px] mb-5"
+                style={{ opacity: 0.65 }}
+              >
+                {now.toLocaleDateString('zh-CN', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                  weekday: 'long',
+                })}
+              </div>
+              <div
+                className="grid grid-cols-7 mb-2 text-center text-[11px] font-medium"
+                style={{ opacity: 0.45, gap: '2px 0' }}
+              >
+                {WEEKDAYS.map((d) => (
+                  <span key={d} className="py-1">
+                    {d}
+                  </span>
+                ))}
+              </div>
+              <div
+                className="grid grid-cols-7 text-center text-[13px]"
+                style={{ gap: '4px 0', paddingBottom: 4 }}
+              >
+                {monthCells.map((d, i) => (
+                  <span
+                    key={i}
+                    className="flex items-center justify-center rounded-lg"
+                    style={{
+                      height: 32,
+                      background:
+                        d === today
+                          ? 'rgba(147,197,253,0.28)'
+                          : 'transparent',
+                      color:
+                        d === today
+                          ? theme === 'light'
+                            ? '#2563eb'
+                            : '#93c5fd'
+                          : d == null
+                            ? 'transparent'
+                            : undefined,
+                      fontWeight: d === today ? 600 : 400,
+                    }}
+                  >
+                    {d ?? ''}
+                  </span>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       <div className="flex items-center gap-2 pointer-events-auto h-8">
