@@ -159,7 +159,7 @@ export default function ToolBar({
 
   return (
     <motion.div
-      className="fixed top-0 inset-x-0 z-[55] flex items-center justify-between gap-3 px-4 pointer-events-none"
+      className="fixed top-0 inset-x-0 z-[55] grid grid-cols-3 items-center gap-3 px-4 pointer-events-none"
       initial={{ y: -72, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.75, ease: DESKTOP_EASE }}
@@ -188,7 +188,7 @@ export default function ToolBar({
         } as React.CSSProperties
       }
     >
-      <div className="flex items-center gap-2 pointer-events-auto h-8">
+      <div className="flex items-center justify-start gap-2 pointer-events-auto h-8 min-w-0">
         <Pill className="!px-1 !gap-0.5">
           {[1, 2, 3].map((n) => (
             <button
@@ -243,7 +243,7 @@ export default function ToolBar({
         </Pill>
       </div>
 
-      <div className="relative pointer-events-auto h-8" ref={calRef}>
+      <div className="relative flex justify-center pointer-events-auto h-8" ref={calRef}>
         <Pill onClick={() => setCalendarOpen((v) => !v)}>
           <span className="font-medium tracking-wide whitespace-nowrap">
             {timeLabel}
@@ -328,7 +328,7 @@ export default function ToolBar({
         </AnimatePresence>
       </div>
 
-      <div className="flex items-center gap-2 pointer-events-auto h-8">
+      <div className="flex items-center justify-end gap-2 pointer-events-auto h-8 min-w-0">
         <Pill>
           <Battery size={ICON} />
           <span>87%</span>
