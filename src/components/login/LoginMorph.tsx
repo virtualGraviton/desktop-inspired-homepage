@@ -45,8 +45,6 @@ interface LoginMorphProps {
 }
 
 const LOAD_CIRCLE = 80 // loading circle diameter
-const CAPSULE_W = 440
-const CAPSULE_H = 64
 
 export default function LoginMorph({
   isMorphing,
