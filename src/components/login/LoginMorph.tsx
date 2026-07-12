@@ -118,7 +118,6 @@ export default function LoginMorph({ isMorphing, onEnter }: LoginMorphProps) {
           WebkitBackdropFilter: 'blur(18px)',
           borderColor: 'rgba(56,189,248,0.9)',
           borderWidth: 2.5,
-          boxShadow: '0 25px 80px rgba(0,0,0,0.45)',
         }}
         initial={false}
         animate={{
@@ -129,6 +128,9 @@ export default function LoginMorph({ isMorphing, onEnter }: LoginMorphProps) {
           borderRadius: isMorphing ? WINDOW_RADIUS : 999,
           paddingLeft: isMorphing ? 0 : 14,
           paddingRight: isMorphing ? 0 : 14,
+          boxShadow: isMorphing
+            ? '0 28px 90px rgba(0,0,0,0.65), 0 0 0 1px rgba(56,189,248,0.25)'
+            : '0 4px 16px rgba(0,0,0,0.25)',
         }}
         transition={{
           type: 'tween',
