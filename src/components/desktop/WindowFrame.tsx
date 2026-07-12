@@ -89,18 +89,18 @@ export default function WindowFrame({
         width: win.rect.width,
         height: win.rect.height,
       }}
-      exit={{ y: 56, opacity: 0, scale: 0.98 }}
+      exit={{
+        y: 56,
+        opacity: 0,
+        scale: 0.98,
+        transition: { duration: 0.3, ease: DESKTOP_EASE },
+      }}
       transition={{
-        y: {
-          duration: skipEnterRef.current ? 0 : 0.3,
-          ease: DESKTOP_EASE,
-        },
-        opacity: {
-          duration: skipEnterRef.current ? 0 : 0.3,
-          ease: DESKTOP_EASE,
-        },
+        // skipEnter only uses initial={false}; never zero these or exit dies too
+        y: { duration: 0.3, ease: DESKTOP_EASE },
+        opacity: { duration: 0.3, ease: DESKTOP_EASE },
         scale: {
-          duration: sizeDuration > 0 ? sizeDuration : skipEnterRef.current ? 0 : 0.3,
+          duration: sizeDuration > 0 ? sizeDuration : 0.3,
           ease: DESKTOP_EASE,
         },
         left: { duration: sizeDuration, ease: DESKTOP_EASE },
@@ -124,7 +124,7 @@ export default function WindowFrame({
           onMinimize={onMinimize}
           onMaximize={onMaximize}
         />
-        <HomepageApp activeNav={activeNav} onNavChange={setActiveNav} />
+        <HomepageApp activeNav={activeNav} onNavChange={setActiveNav} skipEnter={skipEnterRef.current} />
       </div>
 
       {floating && <ResizeHandles onResizePointerDown={onResizePointerDown} />}

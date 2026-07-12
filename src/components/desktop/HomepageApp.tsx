@@ -6,6 +6,7 @@ import type { NavItem } from '../../types'
 interface HomepageAppProps {
   activeNav: NavItem
   onNavChange: (item: NavItem) => void
+  skipEnter?: boolean
 }
 
 const SIDEBAR_FULL = 280
@@ -15,6 +16,7 @@ const COLLAPSE_THRESHOLD = SIDEBAR_FULL + MIN_CONTENT
 export default function HomepageApp({
   activeNav,
   onNavChange,
+  skipEnter = false,
 }: HomepageAppProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [collapsed, setCollapsed] = useState(false)
@@ -35,6 +37,7 @@ export default function HomepageApp({
         activeNav={activeNav}
         onNavChange={onNavChange}
         collapsed={collapsed}
+        skipEnter={skipEnter}
       />
       <ContentArea activeNav={activeNav} />
     </div>

@@ -18,19 +18,30 @@ interface SidebarProps {
   activeNav: NavItem
   onNavChange: (item: NavItem) => void
   collapsed: boolean
+  /** Mount without entrance animation (login handoff). */
+  skipEnter?: boolean
 }
 
 export default function Sidebar({
   activeNav,
   onNavChange,
   collapsed,
+  skipEnter = false,
 }: SidebarProps) {
+  /* When skipEnter, start at the target width to avoid jump */
+  const initialWidth = collapsed ? SIDEBAR_COLLAPSED : SIDEBAR_FULL
+
   return (
     <motion.aside
       layout
       className="flex flex-col shrink-0 overflow-y-auto overflow-x-hidden"
+      initial={skipEnter ? { width: initialWidth } : false}
       animate={{ width: collapsed ? SIDEBAR_COLLAPSED : SIDEBAR_FULL }}
-      transition={{ type: 'tween', ease: [0.16, 1, 0.3, 1], duration: 0.5 }}
+      transition={
+        skipEnter
+          ? { duration: 0 }
+          : { type: 'tween', ease: [0.16, 1, 0.3, 1], duration: 0.5 }
+      }
       style={{
         paddingLeft: collapsed ? 12 : SPACE.lg,
         paddingRight: collapsed ? 12 : SPACE.lg,
@@ -49,7 +60,11 @@ export default function Sidebar({
           gap: collapsed ? 0 : 12,
           justifyContent: collapsed ? 'center' : 'flex-start',
         }}
-        transition={{ type: 'tween', ease: [0.16, 1, 0.3, 1], duration: 0.5 }}
+        transition={
+          skipEnter
+            ? { duration: 0 }
+            : { type: 'tween', ease: [0.16, 1, 0.3, 1], duration: 0.5 }
+        }
       >
         <div
           className="rounded-full shrink-0 overflow-hidden ring-1 ring-white/25"
@@ -68,10 +83,10 @@ export default function Sidebar({
             <motion.div
               className="flex flex-col min-w-0"
               style={{ gap: SPACE.xs }}
-              initial={{ opacity: 0, width: 0 }}
+              initial={skipEnter ? false : { opacity: 0, width: 0 }}
               animate={{ opacity: 1, width: 'auto' }}
               exit={{ opacity: 0, width: 0 }}
-              transition={{ duration: 0.25 }}
+              transition={{ duration: skipEnter ? 0 : 0.25 }}
             >
               <span
                 className="font-semibold text-sm truncate"
@@ -107,10 +122,10 @@ export default function Sidebar({
                     marginBottom: 6,
                     paddingLeft: 12,
                   }}
-                  initial={{ opacity: 0, height: 0 }}
+                  initial={skipEnter ? false : { opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
                   exit={{ opacity: 0, height: 0 }}
-                  transition={{ duration: 0.2 }}
+                  transition={{ duration: skipEnter ? 0 : 0.2 }}
                 >
                   {group.label}
                 </motion.span>
@@ -138,28 +153,37 @@ export default function Sidebar({
                     marginLeft: collapsed ? 'auto' : 0,
                     marginRight: collapsed ? 'auto' : 0,
                   }}
-                  initial={false}
-                  whileHover={collapsed ? {} : { x: 3 }}
-                  animate={
-                    collapsed
-                      ? { x: 0, borderRadius: 8 }
-                      : { x: 0, borderRadius: 12 }
+                  initial={
+                    skipEnter
+                      ? false
+                      : {
+                          borderRadius: collapsed ? 8 : 12,
+                        }
                   }
-                  transition={{
-                    type: 'spring',
-                    stiffness: 300,
-                    damping: 22,
+                  whileHover={collapsed ? {} : { x: 3 }}
+                  animate={{
+                    borderRadius: collapsed ? 8 : 12,
+                    x: 0,
                   }}
+                  transition={
+                    skipEnter
+                      ? { duration: 0 }
+                      : {
+                          type: 'spring',
+                          stiffness: 300,
+                          damping: 22,
+                        }
+                  }
                 >
                   {Icon && <Icon size={17} />}
                   <AnimatePresence>
                     {!collapsed && (
                       <motion.span
                         className="font-medium ml-3"
-                        initial={{ opacity: 0, width: 0 }}
+                        initial={skipEnter ? false : { opacity: 0, width: 0 }}
                         animate={{ opacity: 1, width: 'auto' }}
                         exit={{ opacity: 0, width: 0 }}
-                        transition={{ duration: 0.2 }}
+                        transition={{ duration: skipEnter ? 0 : 0.2 }}
                       >
                         {item.label}
                       </motion.span>
@@ -199,10 +223,10 @@ export default function Sidebar({
               paddingBottom: SPACE.lg,
               borderTop: '1px solid var(--sidebar-divider)',
             }}
-            initial={{ opacity: 0, height: 0 }}
+            initial={skipEnter ? false : { opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.25 }}
+            transition={{ duration: skipEnter ? 0 : 0.25 }}
           >
             <div
               className="flex items-center gap-2"
