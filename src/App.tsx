@@ -1,14 +1,21 @@
 import { motion, AnimatePresence } from 'framer-motion'
-import BackgroundSlideshow from './components/login/BackgroundSlideshow'
-import MorphWindow from './components/MorphWindow'
+import LoginMorph from './components/login/LoginMorph'
+import DesktopShell from './components/desktop/DesktopShell'
+import WallpaperLayer from './components/desktop/WallpaperLayer'
 import { useLoginAnimation } from './hooks/useLoginAnimation'
+import { useWallpaper } from './desktop/useWallpaper'
 
 export default function App() {
   const { isMorphing, isDesktop, showGlass, handleLogin } = useLoginAnimation()
+  const loginWallpaper = useWallpaper()
+
+  if (isDesktop) {
+    return <DesktopShell />
+  }
 
   return (
     <div className="fixed inset-0 overflow-hidden">
-      <BackgroundSlideshow showSwitcher />
+      <WallpaperLayer wallpaper={loginWallpaper} />
 
       <AnimatePresence>
         {showGlass && (
@@ -31,11 +38,7 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      <MorphWindow
-        isMorphing={isMorphing}
-        isDesktop={isDesktop}
-        onEnter={handleLogin}
-      />
+      <LoginMorph isMorphing={isMorphing} onEnter={handleLogin} />
     </div>
   )
 }

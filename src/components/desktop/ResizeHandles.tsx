@@ -1,4 +1,4 @@
-import type { ResizeDir } from '../../hooks/useWindowDragResize'
+import type { ResizeDir } from '../../desktop/types'
 
 /**
  * Most edges sit half-in / half-out.
