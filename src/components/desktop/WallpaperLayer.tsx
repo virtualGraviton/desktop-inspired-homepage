@@ -31,11 +31,6 @@ export default function WallpaperLayer({ wallpaper }: WallpaperLayerProps) {
           onAnimationEnd={onRevealEnd}
         />
       )}
-
-      <div
-        className="absolute inset-0 z-[1] pointer-events-none"
-        style={{ background: 'rgba(0,0,0,0.25)' }}
-      />
     </div>
   )
 }
