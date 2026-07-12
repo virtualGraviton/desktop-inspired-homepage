@@ -15,6 +15,8 @@ import {
 } from 'lucide-react'
 import { DESKTOP_EASE, TOOLBAR_RESERVED_H } from '../../desktop/constants'
 import type { RevealOrigin } from '../../desktop/useWallpaper'
+import NowPlaying from './NowPlaying'
+import VolumeControl from './VolumeControl'
 
 /** Build a Sun–Sat month grid; leading/trailing empties are null. */
 function buildMonthCells(date: Date): (number | null)[] {
@@ -109,9 +111,13 @@ export default function ToolBar({
 }: ToolBarProps) {
   const [now, setNow] = useState(() => new Date())
   const [calendarOpen, setCalendarOpen] = useState(false)
+  const [musicOpen, setMusicOpen] = useState(false)
+  const [volumeOpen, setVolumeOpen] = useState(false)
   const [workspace, setWorkspace] = useState(1)
-  const [volume] = useState(40)
+  const [volume, setVolume] = useState(40)
   const calRef = useRef<HTMLDivElement>(null)
+  const musicRef = useRef<HTMLDivElement>(null)
+  const volumeRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const t = window.setInterval(() => setNow(new Date()), 1000)
@@ -204,9 +210,21 @@ export default function ToolBar({
             </button>
           ))}
         </Pill>
-        <Pill title="Music" onClick={() => undefined} square>
-          <Music2 size={ICON} />
-        </Pill>
+        <div className="relative pointer-events-auto h-8" ref={musicRef}>
+          <Pill
+            title="Music"
+            onClick={() => setMusicOpen((v) => !v)}
+            square
+          >
+            <Music2 size={ICON} />
+          </Pill>
+          <NowPlaying
+            open={musicOpen}
+            onClose={() => setMusicOpen(false)}
+            theme={theme}
+            triggerRef={musicRef}
+          />
+        </div>
         <Pill title="Toggle theme" onClick={onToggleTheme} square>
           {theme === 'dark' ? <Moon size={ICON} /> : <Sun size={ICON} />}
         </Pill>
@@ -322,10 +340,22 @@ export default function ToolBar({
         <Pill title="Background apps" square onClick={() => undefined}>
           <LayoutGrid size={ICON} />
         </Pill>
-        <Pill>
-          <Headphones size={ICON} />
-          <span>{volume}%</span>
-        </Pill>
+        <div className="relative pointer-events-auto h-8" ref={volumeRef}>
+          <Pill
+            title="Volume"
+            onClick={() => setVolumeOpen((v) => !v)}
+          >
+            <Headphones size={ICON} />
+            <span>{volume}%</span>
+          </Pill>
+          <VolumeControl
+            open={volumeOpen}
+            onClose={() => setVolumeOpen(false)}
+            theme={theme}
+            onVolumeChange={setVolume}
+            triggerRef={volumeRef}
+          />
+        </div>
         <Pill title="Notifications" square onClick={() => undefined}>
           <span
             className="inline-flex h-full w-full items-center justify-center rounded-full"
