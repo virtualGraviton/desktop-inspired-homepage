@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
 import { PROFILE } from '../../constants'
+import { useTypewriter } from '../../hooks/useTypewriter'
 import TitleBar from '../desktop/TitleBar'
 import HomepageApp from '../desktop/HomepageApp'
 import { WINDOW_RADIUS } from '../../desktop/constants'
@@ -38,6 +39,24 @@ export default function LoginMorph({ isMorphing, onEnter }: LoginMorphProps) {
   }, [isMorphing])
 
   const rect = isMorphing ? target : capsule
+
+  const { displayed, isDone } = useTypewriter(PROFILE.name, 80, 500)
+  const cursorVisible = useRef(true)
+
+  /* Blinking cursor (CSS animation via data attribute) */
+  useEffect(() => {
+    if (!isDone) {
+      cursorVisible.current = true
+      return
+    }
+    const interval = window.setInterval(() => {
+      cursorVisible.current = !cursorVisible.current
+      // Force re-render via a tiny state toggle
+      const el = document.querySelector('[data-typewriter-cursor]') as HTMLElement | null
+      if (el) el.style.opacity = cursorVisible.current ? '1' : '0'
+    }, 530)
+    return () => window.clearInterval(interval)
+  }, [isDone])
 
   const timeStr = now.toLocaleTimeString('zh-CN', {
     hour: '2-digit',
@@ -139,10 +158,22 @@ export default function LoginMorph({ isMorphing, onEnter }: LoginMorphProps) {
               </div>
 
               <span
-                className="min-w-0 font-semibold text-white text-center truncate"
-                style={{ fontSize: 18, lineHeight: '24px' }}
+                className="min-w-0 text-white text-center truncate"
+                style={{ fontSize: 18, lineHeight: '24px', fontFamily: "'JetBrains Mono', monospace", fontWeight: 500 }}
               >
-                {PROFILE.name}
+                {displayed}
+                <span
+                  data-typewriter-cursor
+                  className="inline-block align-baseline relative"
+                  style={{
+                    width: 9,
+                    height: 2,
+                    marginLeft: 2,
+                    top: 3,
+                    background: 'rgba(255,255,255,0.7)',
+                    opacity: 1,
+                  }}
+                />
               </span>
 
               <motion.button
