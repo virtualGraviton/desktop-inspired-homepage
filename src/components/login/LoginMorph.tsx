@@ -24,6 +24,13 @@ export default function LoginMorph({ isMorphing, onEnter }: LoginMorphProps) {
   const [target, setTarget] = useState<WindowRect>(() =>
     getCenteredFloatingRect(),
   )
+  const [now, setNow] = useState(() => new Date())
+
+  /* Live clock */
+  useEffect(() => {
+    const t = window.setInterval(() => setNow(new Date()), 1000)
+    return () => window.clearInterval(t)
+  }, [])
 
   useEffect(() => {
     if (!isMorphing) return
@@ -32,8 +39,57 @@ export default function LoginMorph({ isMorphing, onEnter }: LoginMorphProps) {
 
   const rect = isMorphing ? target : capsule
 
+  const timeStr = now.toLocaleTimeString('zh-CN', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  })
+  const dateStr = now.toLocaleDateString('zh-CN', {
+    month: 'long',
+    day: 'numeric',
+    weekday: 'long',
+  })
+
   return (
     <div className="fixed inset-0 z-10 pointer-events-none">
+      {/* Date / Time — fades out when capsule morphs */}
+      <AnimatePresence>
+        {!isMorphing && (
+          <motion.div
+            key="login-clock"
+            className="absolute left-0 w-full text-center pointer-events-none"
+            style={{
+              top: rect.y - 112,
+            }}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <div
+              className="font-bold tracking-tight leading-none"
+              style={{
+                fontSize: 56,
+                color: 'rgba(255,255,255,0.92)',
+                textShadow: '0 2px 16px rgba(0,0,0,0.35)',
+                marginBottom: 8,
+              }}
+            >
+              {timeStr}
+            </div>
+            <div
+              className="text-lg font-medium"
+              style={{
+                color: 'rgba(255,255,255,0.6)',
+                textShadow: '0 1px 8px rgba(0,0,0,0.3)',
+              }}
+            >
+              {dateStr}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <motion.div
         className="absolute flex flex-col border overflow-hidden pointer-events-auto"
         style={{
