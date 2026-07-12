@@ -38,6 +38,7 @@ const WEEKDAYS = ['日', '一', '二', '三', '四', '五', '六'] as const
 /** Shared chrome size for every toolbar control */
 const PILL_H = 32
 const ICON = 14
+const TOOLBAR_NARROW_BP = 900
 
 interface ToolBarProps {
   theme: 'dark' | 'light'
@@ -56,7 +57,6 @@ function Pill({
   className?: string
   onClick?: (e: React.MouseEvent<HTMLElement>) => void
   title?: string
-  /** Icon-only control: fixed square hit target */
   square?: boolean
 }) {
   const style: React.CSSProperties = {
@@ -104,6 +104,31 @@ function Pill({
   )
 }
 
+/** Framer Motion wrapper for a pill that fades & scales in/out */
+function AnimatedPill({
+  show,
+  children,
+}: {
+  show: boolean
+  children: React.ReactNode
+}) {
+  return (
+    <AnimatePresence mode="popLayout">
+      {show && (
+        <motion.div
+          className="shrink-0"
+          initial={{ opacity: 0, scale: 0.7 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.7 }}
+          transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+        >
+          {children}
+        </motion.div>
+      )}
+    </AnimatePresence>
+  )
+}
+
 export default function ToolBar({
   theme,
   onToggleTheme,
@@ -115,9 +140,19 @@ export default function ToolBar({
   const [volumeOpen, setVolumeOpen] = useState(false)
   const [workspace, setWorkspace] = useState(1)
   const [volume, setVolume] = useState(40)
+  const [isNarrow, setIsNarrow] = useState(
+    () => window.innerWidth < TOOLBAR_NARROW_BP,
+  )
   const calRef = useRef<HTMLDivElement>(null)
   const musicRef = useRef<HTMLDivElement>(null)
   const volumeRef = useRef<HTMLDivElement>(null)
+
+  /* Track viewport width */
+  useEffect(() => {
+    const onResize = () => setIsNarrow(window.innerWidth < TOOLBAR_NARROW_BP)
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
 
   useEffect(() => {
     const t = window.setInterval(() => setNow(new Date()), 1000)
@@ -170,7 +205,6 @@ export default function ToolBar({
             theme === 'light'
               ? 'rgba(255,255,255,0.82)'
               : 'rgba(10,10,14,0.78)',
-          // Light: darker hover so it reads on pale pills; dark: lighter wash
           ['--pill-bg-hover' as string]:
             theme === 'light'
               ? 'rgba(24,24,27,0.12)'
@@ -188,43 +222,51 @@ export default function ToolBar({
         } as React.CSSProperties
       }
     >
+      {/* ---- Left column ---- */}
       <div className="flex items-center justify-start gap-2 pointer-events-auto h-8 min-w-0">
-        <Pill className="!px-1 !gap-0.5">
-          {[1, 2, 3].map((n) => (
-            <button
-              key={n}
-              type="button"
-              onClick={() => setWorkspace(n)}
-              onMouseDown={(e) => e.preventDefault()}
-              data-active={workspace === n ? 'true' : undefined}
-              className="toolbar-pill--interactive flex items-center justify-center rounded-full text-[11px] font-semibold border border-transparent cursor-pointer shrink-0 outline-none focus:outline-none appearance-none"
-              style={{
-                width: 24,
-                height: 24,
-                background: workspace === n ? '#93c5fd' : 'transparent',
-                color: workspace === n ? '#0f1115' : 'inherit',
-                transition: 'background-color 0.15s ease, border-color 0.15s ease',
-              }}
-            >
-              {n}
-            </button>
-          ))}
-        </Pill>
-        <div className="relative pointer-events-auto h-8" ref={musicRef}>
-          <Pill
-            title="Music"
-            onClick={() => setMusicOpen((v) => !v)}
-            square
-          >
-            <Music2 size={ICON} />
+        <AnimatedPill show={!isNarrow}>
+          <Pill className="!px-1 !gap-0.5">
+            {[1, 2, 3].map((n) => (
+              <button
+                key={n}
+                type="button"
+                onClick={() => setWorkspace(n)}
+                onMouseDown={(e) => e.preventDefault()}
+                data-active={workspace === n ? 'true' : undefined}
+                className="toolbar-pill--interactive flex items-center justify-center rounded-full text-[11px] font-semibold border border-transparent cursor-pointer shrink-0 outline-none focus:outline-none appearance-none"
+                style={{
+                  width: 24,
+                  height: 24,
+                  background: workspace === n ? '#93c5fd' : 'transparent',
+                  color: workspace === n ? '#0f1115' : 'inherit',
+                  transition:
+                    'background-color 0.15s ease, border-color 0.15s ease',
+                }}
+              >
+                {n}
+              </button>
+            ))}
           </Pill>
-          <NowPlaying
-            open={musicOpen}
-            onClose={() => setMusicOpen(false)}
-            theme={theme}
-            triggerRef={musicRef}
-          />
-        </div>
+        </AnimatedPill>
+
+        <AnimatedPill show={!isNarrow}>
+          <div className="relative pointer-events-auto h-8" ref={musicRef}>
+            <Pill
+              title="Music"
+              onClick={() => setMusicOpen((v) => !v)}
+              square
+            >
+              <Music2 size={ICON} />
+            </Pill>
+            <NowPlaying
+              open={musicOpen}
+              onClose={() => setMusicOpen(false)}
+              theme={theme}
+              triggerRef={musicRef}
+            />
+          </div>
+        </AnimatedPill>
+
         <Pill title="Toggle theme" onClick={onToggleTheme} square>
           {theme === 'dark' ? <Moon size={ICON} /> : <Sun size={ICON} />}
         </Pill>
@@ -243,6 +285,7 @@ export default function ToolBar({
         </Pill>
       </div>
 
+      {/* ---- Center (clock) ---- */}
       <div className="relative flex justify-center pointer-events-auto h-8" ref={calRef}>
         <Pill onClick={() => setCalendarOpen((v) => !v)}>
           <span className="font-medium tracking-wide whitespace-nowrap">
@@ -328,34 +371,47 @@ export default function ToolBar({
         </AnimatePresence>
       </div>
 
+      {/* ---- Right column ---- */}
       <div className="flex items-center justify-end gap-2 pointer-events-auto h-8 min-w-0">
-        <Pill>
-          <Battery size={ICON} />
-          <span>87%</span>
-        </Pill>
-        <Pill title="Network">
-          <Wifi size={ICON} />
-          <Bluetooth size={ICON} />
-        </Pill>
-        <Pill title="Background apps" square onClick={() => undefined}>
-          <LayoutGrid size={ICON} />
-        </Pill>
-        <div className="relative pointer-events-auto h-8" ref={volumeRef}>
-          <Pill
-            title="Volume"
-            onClick={() => setVolumeOpen((v) => !v)}
-          >
-            <Headphones size={ICON} />
-            <span>{volume}%</span>
+        <AnimatedPill show={!isNarrow}>
+          <Pill>
+            <Battery size={ICON} />
+            <span>87%</span>
           </Pill>
-          <VolumeControl
-            open={volumeOpen}
-            onClose={() => setVolumeOpen(false)}
-            theme={theme}
-            onVolumeChange={setVolume}
-            triggerRef={volumeRef}
-          />
-        </div>
+        </AnimatedPill>
+
+        <AnimatedPill show={!isNarrow}>
+          <Pill title="Network">
+            <Wifi size={ICON} />
+            <Bluetooth size={ICON} />
+          </Pill>
+        </AnimatedPill>
+
+        <AnimatedPill show={!isNarrow}>
+          <Pill title="Background apps" square onClick={() => undefined}>
+            <LayoutGrid size={ICON} />
+          </Pill>
+        </AnimatedPill>
+
+        <AnimatedPill show={!isNarrow}>
+          <div className="relative pointer-events-auto h-8" ref={volumeRef}>
+            <Pill
+              title="Volume"
+              onClick={() => setVolumeOpen((v) => !v)}
+            >
+              <Headphones size={ICON} />
+              <span>{volume}%</span>
+            </Pill>
+            <VolumeControl
+              open={volumeOpen}
+              onClose={() => setVolumeOpen(false)}
+              theme={theme}
+              onVolumeChange={setVolume}
+              triggerRef={volumeRef}
+            />
+          </div>
+        </AnimatedPill>
+
         <Pill title="Notifications" square onClick={() => undefined}>
           <span
             className="inline-flex h-full w-full items-center justify-center rounded-full"
@@ -364,6 +420,7 @@ export default function ToolBar({
             <Bell size={ICON} />
           </span>
         </Pill>
+
         <Pill title="Power" square onClick={() => undefined}>
           <span
             className="inline-flex h-full w-full items-center justify-center rounded-full"
