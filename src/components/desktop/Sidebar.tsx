@@ -24,8 +24,8 @@ export default function Sidebar({ activeNav, onNavChange }: SidebarProps) {
         width: 280,
         paddingLeft: SPACE.lg,
         paddingRight: SPACE.lg,
-        background: 'rgba(0,0,0,0.18)',
-        borderRight: '1px solid rgba(255,255,255,0.12)',
+        background: 'var(--sidebar-bg)',
+        borderRight: '1px solid var(--sidebar-border)',
       }}
     >
       <div
@@ -33,7 +33,7 @@ export default function Sidebar({ activeNav, onNavChange }: SidebarProps) {
         style={{
           paddingTop: SPACE.xl,
           paddingBottom: SPACE.lg,
-          borderBottom: '1px solid rgba(255,255,255,0.1)',
+          borderBottom: '1px solid var(--sidebar-divider)',
         }}
       >
         <div
@@ -83,32 +83,23 @@ export default function Sidebar({ activeNav, onNavChange }: SidebarProps) {
             {group.items.map((item) => {
               const Icon = iconMap[item.icon]
               const isActive = activeNav === item.id
-              const activeBg = 'rgba(255,255,255,0.12)'
-              const idleBg = 'rgba(255,255,255,0)'
-              const hoverBg = 'rgba(255,255,255,0.06)'
 
               return (
                 <motion.button
                   key={item.id}
+                  type="button"
                   onClick={() => onNavChange(item.id)}
-                  className="flex items-center gap-3 rounded-xl text-sm cursor-pointer w-full text-left"
+                  data-active={isActive ? 'true' : undefined}
+                  className="sidebar-nav-item flex items-center gap-3 rounded-xl text-sm cursor-pointer w-full text-left"
                   style={{
                     height: 40,
                     paddingLeft: 12,
                     paddingRight: 12,
                     color: isActive ? INK.primary : INK.secondary,
                   }}
-                  // Framer must own backgroundColor via animate; mixing style.background
-                  // with whileHover.backgroundColor leaves a stale inline value after hover.
                   initial={false}
-                  animate={{
-                    backgroundColor: isActive ? activeBg : idleBg,
-                    x: 0,
-                  }}
-                  whileHover={{
-                    x: 3,
-                    backgroundColor: isActive ? activeBg : hoverBg,
-                  }}
+                  animate={{ x: 0 }}
+                  whileHover={{ x: 3 }}
                   transition={{ type: 'spring', stiffness: 300, damping: 22 }}
                 >
                   {Icon && <Icon size={17} />}
@@ -126,7 +117,7 @@ export default function Sidebar({ activeNav, onNavChange }: SidebarProps) {
           color: INK.muted,
           paddingTop: SPACE.md,
           paddingBottom: SPACE.lg,
-          borderTop: '1px solid rgba(255,255,255,0.1)',
+          borderTop: '1px solid var(--sidebar-divider)',
         }}
       >
         <div

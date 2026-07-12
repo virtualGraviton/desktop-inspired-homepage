@@ -117,9 +117,9 @@ export default function ContentArea({ activeNav }: ContentAreaProps) {
                 style={{
                   height: 32,
                   padding: '0 16px',
-                  background: 'rgba(79,142,247,0.18)',
+                  background: 'var(--skill-bg)',
                   color: INK.accentSoft,
-                  border: '1px solid rgba(147,197,253,0.35)',
+                  border: '1px solid var(--skill-border)',
                 }}
                 whileHover={{ scale: 1.04 }}
                 transition={{ type: 'spring', stiffness: 400, damping: 20 }}
@@ -153,8 +153,8 @@ export default function ContentArea({ activeNav }: ContentAreaProps) {
                   minHeight: 200,
                   padding: SPACE.lg,
                   gap: SPACE.sm,
-                  background: 'rgba(255,255,255,0.06)',
-                  border: '1px solid rgba(255,255,255,0.14)',
+                  background: 'var(--surface-card)',
+                  border: '1px solid var(--surface-card-border)',
                 }}
               >
                 <span

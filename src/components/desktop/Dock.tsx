@@ -50,10 +50,10 @@ export default function Dock({ open, focused, onToggle }: DockProps) {
       <motion.div
         className="relative flex items-center justify-center overflow-hidden"
         style={{
-          background: 'rgba(12,12,16,0.72)',
+          background: 'var(--dock-bg)',
           backdropFilter: 'blur(18px)',
-          border: '1px solid rgba(255,255,255,0.14)',
-          boxShadow: '0 12px 40px rgba(0,0,0,0.45)',
+          border: '1px solid var(--dock-border)',
+          boxShadow: 'var(--dock-shadow)',
         }}
         initial={false}
         animate={{
@@ -74,7 +74,7 @@ export default function Dock({ open, focused, onToggle }: DockProps) {
             height: 3,
             marginLeft: -16,
             marginTop: -1.5,
-            background: 'rgba(255,255,255,0.4)',
+            background: 'var(--dock-peeker)',
           }}
           initial={false}
           animate={{ opacity: expanded ? 0 : 1 }}

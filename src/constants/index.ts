@@ -75,14 +75,14 @@ export const TIMELINE = [
   },
 ]
 
-/** Solid text colors — avoid translucent white on glass */
+/** Solid text colors via theme CSS vars — avoid translucent white on glass */
 export const INK = {
-  primary: '#f4f4f5',
-  secondary: '#d4d4d8',
-  muted: '#a1a1aa',
-  faint: '#71717a',
-  accent: '#93c5fd',
-  accentSoft: '#bfdbfe',
+  primary: 'var(--ink-primary)',
+  secondary: 'var(--ink-secondary)',
+  muted: 'var(--ink-muted)',
+  faint: 'var(--ink-faint)',
+  accent: 'var(--ink-accent)',
+  accentSoft: 'var(--ink-accent-soft)',
 } as const
 
 /** 8pt spacing system */

@@ -164,9 +164,10 @@ export default function ToolBar({
             theme === 'light'
               ? 'rgba(255,255,255,0.82)'
               : 'rgba(10,10,14,0.78)',
+          // Light: darker hover so it reads on pale pills; dark: lighter wash
           ['--pill-bg-hover' as string]:
             theme === 'light'
-              ? 'rgba(255,255,255,0.95)'
+              ? 'rgba(24,24,27,0.12)'
               : 'rgba(255,255,255,0.14)',
           ['--pill-fg' as string]:
             theme === 'light' ? '#18181b' : 'rgba(244,244,245,0.9)',

@@ -66,15 +66,14 @@ export default function WindowFrame({
         zIndex: win.zIndex,
         borderRadius: WINDOW_RADIUS,
         border: win.focused
-          ? '2.5px solid rgba(56, 189, 248, 0.9)'
-          : '2px solid rgba(56, 189, 248, 0.55)',
-        background:
-          'linear-gradient(rgba(255,255,255,0.06), rgba(255,255,255,0.06)), rgba(10,10,14,0.72)',
+          ? '2.5px solid var(--win-border-focused)'
+          : '2px solid var(--win-border)',
+        background: 'var(--win-bg)',
         backdropFilter: 'blur(18px)',
         WebkitBackdropFilter: 'blur(18px)',
         boxShadow: win.focused
-          ? '0 28px 90px rgba(0,0,0,0.65), 0 0 0 1px rgba(56,189,248,0.25)'
-          : '0 12px 40px rgba(0,0,0,0.4)',
+          ? 'var(--win-shadow-focused)'
+          : 'var(--win-shadow)',
       }}
       initial={
         skipEnterRef.current

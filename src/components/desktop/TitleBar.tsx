@@ -25,7 +25,7 @@ export default function TitleBar({
         height: 44,
         paddingLeft: 24,
         paddingRight: 16,
-        borderBottom: '1px solid rgba(255,255,255,0.12)',
+        borderBottom: '1px solid var(--titlebar-border)',
         cursor: onDragPointerDown ? 'grab' : 'default',
         touchAction: onDragPointerDown ? 'none' : undefined,
         opacity: focused ? 1 : 0.85,
@@ -61,7 +61,7 @@ export default function TitleBar({
 
       <div
         className="absolute inset-0 flex items-center justify-center font-mono text-[13px] pointer-events-none"
-        style={{ color: 'rgba(244,244,245,0.55)' }}
+        style={{ color: 'var(--titlebar-path)' }}
       >
         {NAV_PATHS[activeNav]}
       </div>
