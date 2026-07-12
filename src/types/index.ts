@@ -1,6 +1,6 @@
 export type NavItem = 'about' | 'projects' | 'blog' | 'github' | 'contact'
 
-export type AnimationPhase = 'idle' | 'morphContent' | 'complete'
+export type AnimationPhase = 'boot' | 'loading' | 'idle' | 'morphContent' | 'complete'
 
 export interface NavEntry {
   id: NavItem

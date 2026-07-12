@@ -13,18 +13,61 @@ import {
 import type { WindowRect } from '../../desktop/types'
 import type { NavItem } from '../../types'
 
+/* ------------------------------------------------------------------ */
+/* Spinner ring — SVG arc circling the avatar during loading          */
+/* ------------------------------------------------------------------ */
+function SpinnerRing() {
+  return (
+    <svg
+      className="absolute inset-0"
+      viewBox="0 0 80 80"
+      style={{ animation: 'spin 1.2s linear infinite' }}
+    >
+      <circle
+        cx={40}
+        cy={40}
+        r={36}
+        fill="none"
+        stroke="rgba(56,189,248,0.5)"
+        strokeWidth={2.5}
+        strokeLinecap="round"
+        strokeDasharray="180 46"
+      />
+    </svg>
+  )
+}
+
+/* ------------------------------------------------------------------ */
 interface LoginMorphProps {
   isMorphing: boolean
+  isBeforeIdle: boolean
   onEnter: () => void
 }
 
-/** Login capsule → expand with real chrome; DesktopShell takes over without a second enter anim. */
-export default function LoginMorph({ isMorphing, onEnter }: LoginMorphProps) {
+const LOAD_CIRCLE = 80 // loading circle diameter
+const CAPSULE_W = 440
+const CAPSULE_H = 64
+
+export default function LoginMorph({
+  isMorphing,
+  isBeforeIdle,
+  onEnter,
+}: LoginMorphProps) {
   const [activeNav, setActiveNav] = useState<NavItem>('about')
-  const [capsule] = useState<WindowRect>(() => getLoginCapsuleRect())
+  const [capsule, setCapsule] = useState<WindowRect>(() => getLoginCapsuleRect())
   const [target, setTarget] = useState<WindowRect>(() =>
     getCenteredFloatingRect(),
   )
+
+  /* Recalculate positions on window resize */
+  useEffect(() => {
+    const onResize = () => {
+      setCapsule(getLoginCapsuleRect())
+      if (isMorphing) setTarget(getCenteredFloatingRect())
+    }
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [isMorphing])
   const [now, setNow] = useState(() => new Date())
 
   /* Live clock */
@@ -33,17 +76,31 @@ export default function LoginMorph({ isMorphing, onEnter }: LoginMorphProps) {
     return () => window.clearInterval(t)
   }, [])
 
-  useEffect(() => {
-    if (!isMorphing) return
-    setTarget(getCenteredFloatingRect())
-  }, [isMorphing])
+  /* Position ------------------------------------------------------- */
+  const morphRect = isMorphing ? target : capsule
 
-  const rect = isMorphing ? target : capsule
+  // Loading: centered circle
+  const loadX = (window.innerWidth - LOAD_CIRCLE) / 2
+  const loadY = (window.innerHeight - LOAD_CIRCLE) / 2
 
-  const { displayed, isDone } = useTypewriter(PROFILE.name, 80, 500)
+  // Decide current rect for the container
+  const containerRect = isMorphing
+    ? morphRect
+    : isBeforeIdle
+      ? { x: loadX, y: loadY, width: LOAD_CIRCLE, height: LOAD_CIRCLE }
+      : capsule
+
+  const isCapsule = !isMorphing && !isBeforeIdle
+
+  /* Typewriter — only start when idle (not during loading morph) */
+  const { displayed, isDone } = useTypewriter(
+    isCapsule ? PROFILE.name : '',
+    80,
+    isCapsule ? 500 : 0,
+  )
+
+  /* Blinking cursor */
   const cursorVisible = useRef(true)
-
-  /* Blinking cursor (CSS animation via data attribute) */
   useEffect(() => {
     if (!isDone) {
       cursorVisible.current = true
@@ -51,13 +108,15 @@ export default function LoginMorph({ isMorphing, onEnter }: LoginMorphProps) {
     }
     const interval = window.setInterval(() => {
       cursorVisible.current = !cursorVisible.current
-      // Force re-render via a tiny state toggle
-      const el = document.querySelector('[data-typewriter-cursor]') as HTMLElement | null
+      const el = document.querySelector(
+        '[data-typewriter-cursor]',
+      ) as HTMLElement | null
       if (el) el.style.opacity = cursorVisible.current ? '1' : '0'
     }, 530)
     return () => window.clearInterval(interval)
   }, [isDone])
 
+  /* Clock strings */
   const timeStr = now.toLocaleTimeString('zh-CN', {
     hour: '2-digit',
     minute: '2-digit',
@@ -71,15 +130,13 @@ export default function LoginMorph({ isMorphing, onEnter }: LoginMorphProps) {
 
   return (
     <div className="fixed inset-0 z-10 pointer-events-none">
-      {/* Date / Time — fades out when capsule morphs */}
+      {/* Date / Time — only during idle (login) */}
       <AnimatePresence>
-        {!isMorphing && (
+        {isCapsule && (
           <motion.div
             key="login-clock"
             className="absolute left-0 w-full text-center pointer-events-none"
-            style={{
-              top: rect.y - 112,
-            }}
+            style={{ top: capsule.y - 112 }}
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6 }}
@@ -109,6 +166,7 @@ export default function LoginMorph({ isMorphing, onEnter }: LoginMorphProps) {
         )}
       </AnimatePresence>
 
+      {/* Main morphing container */}
       <motion.div
         className="absolute flex flex-col border overflow-hidden pointer-events-auto"
         style={{
@@ -121,72 +179,107 @@ export default function LoginMorph({ isMorphing, onEnter }: LoginMorphProps) {
         }}
         initial={false}
         animate={{
-          left: rect.x,
-          top: rect.y,
-          width: rect.width,
-          height: rect.height,
-          borderRadius: isMorphing ? WINDOW_RADIUS : 999,
-          paddingLeft: isMorphing ? 0 : 14,
-          paddingRight: isMorphing ? 0 : 14,
+          left: containerRect.x,
+          top: containerRect.y,
+          width: containerRect.width,
+          height: containerRect.height,
+          borderRadius: isBeforeIdle ? LOAD_CIRCLE / 2 : isMorphing ? WINDOW_RADIUS : 999,
+          paddingLeft: isBeforeIdle ? 0 : isMorphing ? 0 : 14,
+          paddingRight: isBeforeIdle ? 0 : isMorphing ? 0 : 14,
           boxShadow: isMorphing
             ? '0 28px 90px rgba(0,0,0,0.65), 0 0 0 1px rgba(56,189,248,0.25)'
-            : '0 4px 16px rgba(0,0,0,0.25)',
+            : isBeforeIdle
+              ? '0 0 30px rgba(56,189,248,0.2)'
+              : '0 4px 16px rgba(0,0,0,0.25)',
         }}
         transition={{
           type: 'tween',
           ease: [0.16, 1, 0.3, 1],
-          duration: 0.5,
+          duration: isBeforeIdle ? 0.6 : 0.5,
         }}
       >
         <AnimatePresence mode="popLayout" initial={false}>
           {!isMorphing ? (
             <motion.div
-              key="login-chrome"
-              className="grid h-full w-full items-center"
-              style={{
-                gridTemplateColumns: '40px minmax(0, 1fr) 40px',
-                columnGap: 14,
-              }}
-              initial={{ opacity: 1 }}
+              key="login-content"
+              className="h-full w-full flex items-center justify-center"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
               exit={{ opacity: 0, transition: { duration: 0.15 } }}
+              transition={{ duration: 0.3 }}
             >
-              <div className="h-10 w-10 justify-self-start rounded-full overflow-hidden ring-1 ring-white/20">
+              {/* Loading ring */}
+              {isBeforeIdle && <SpinnerRing />}
+
+              {/* Avatar */}
+              <motion.div
+                className="rounded-full overflow-hidden ring-1 ring-white/20 shrink-0 z-10"
+                layout
+                animate={
+                  isBeforeIdle
+                    ? { width: 40, height: 40 }
+                    : { width: 40, height: 40 }
+                }
+                transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+              >
                 <img
                   src={PROFILE.avatar}
                   alt={PROFILE.name}
                   className="h-full w-full object-cover"
                   draggable={false}
                 />
-              </div>
+              </motion.div>
 
-              <span
-                className="min-w-0 text-white text-center truncate"
-                style={{ fontSize: 18, lineHeight: '24px', fontFamily: "'JetBrains Mono', monospace", fontWeight: 500 }}
-              >
-                {displayed}
-                <span
-                  data-typewriter-cursor
-                  className="inline-block align-baseline relative"
+              {/* Name + Button — only in capsule state */}
+              {isCapsule && (
+                <motion.div
+                  className="flex items-center w-full"
                   style={{
-                    width: 9,
-                    height: 2,
-                    marginLeft: 2,
-                    top: 3,
-                    background: 'rgba(255,255,255,0.7)',
-                    opacity: 1,
+                    marginLeft: 14,
+                    gap: 14,
                   }}
-                />
-              </span>
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.4, delay: 0.25 }}
+                >
+                  <span
+                    className="min-w-0 flex-1 text-white text-center truncate"
+                    style={{
+                      fontSize: 18,
+                      lineHeight: '24px',
+                      fontFamily: "'JetBrains Mono', monospace",
+                      fontWeight: 500,
+                    }}
+                  >
+                    {displayed}
+                    <span
+                      data-typewriter-cursor
+                      className="inline-block align-baseline relative"
+                      style={{
+                        width: 9,
+                        height: 2,
+                        marginLeft: 2,
+                        top: 3,
+                        background: 'rgba(255,255,255,0.7)',
+                        opacity: 1,
+                      }}
+                    />
+                  </span>
 
-              <motion.button
-                onClick={onEnter}
-                className="flex h-10 w-10 items-center justify-center justify-self-end rounded-full bg-white/10 text-white/70 hover:bg-white/20 transition-colors cursor-pointer"
-                whileHover={{ scale: 1.08 }}
-                whileTap={{ scale: 0.95 }}
-                aria-label="Enter"
-              >
-                <ArrowRight size={18} />
-              </motion.button>
+                  <motion.button
+                    onClick={onEnter}
+                    className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white/70 hover:bg-white/20 transition-colors cursor-pointer shrink-0"
+                    whileHover={{ scale: 1.08 }}
+                    whileTap={{ scale: 0.95 }}
+                    aria-label="Enter"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.35, duration: 0.3 }}
+                  >
+                    <ArrowRight size={18} />
+                  </motion.button>
+                </motion.div>
+              )}
             </motion.div>
           ) : (
             <motion.div
