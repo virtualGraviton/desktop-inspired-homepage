@@ -10,3 +10,6 @@ export const HOMEPAGE_APP = {
   id: 'homepage' as const,
   name: 'Homepage',
 }
+
+/** Shared motion easing: cubic-bezier(0.25, 0.10, 0.25, 1.00) */
+export const DESKTOP_EASE = [0.25, 0.1, 0.25, 1] as const

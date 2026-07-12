@@ -70,7 +70,7 @@ body {
 }
 
 .wallpaper-reveal {
-  animation: wallpaper-circle-reveal 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: wallpaper-circle-reveal 2s cubic-bezier(0.25, 0.10, 0.25, 1.00) forwards;
   will-change: clip-path;
 }
 

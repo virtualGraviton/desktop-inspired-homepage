@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
+import { motion } from 'framer-motion'
 import { PROFILE } from '../../constants'
-import { HOMEPAGE_APP } from '../../desktop/constants'
+import { DESKTOP_EASE, HOMEPAGE_APP } from '../../desktop/constants'
 
 interface DockProps {
   open: boolean
@@ -30,11 +31,14 @@ export default function Dock({ open, focused, onToggle }: DockProps) {
   }
 
   return (
-    <div
+    <motion.div
       className="fixed left-1/2 z-[60] -translate-x-1/2 pointer-events-auto"
       style={{ bottom: expanded ? 14 : 4 }}
       onMouseEnter={onEnter}
       onMouseLeave={onLeave}
+      initial={{ y: 96, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.75, ease: DESKTOP_EASE, delay: 0.08 }}
     >
       <div
         className="flex items-center justify-center transition-all duration-300 overflow-visible"
@@ -90,6 +94,6 @@ export default function Dock({ open, focused, onToggle }: DockProps) {
           />
         )}
       </div>
-    </div>
+    </motion.div>
   )
 }

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { AnimatePresence } from 'framer-motion'
 import WallpaperLayer from './WallpaperLayer'
 import ToolBar from './ToolBar'
 import Dock from './Dock'
@@ -28,10 +29,7 @@ export default function DesktopShell() {
   const homepage = wm.windows.find((w) => w.id === HOMEPAGE_WINDOW_ID)
 
   return (
-    <div
-      className="fixed inset-0 overflow-hidden"
-      data-theme={theme}
-    >
+    <div className="fixed inset-0 overflow-hidden" data-theme={theme}>
       <WallpaperLayer wallpaper={wallpaper} />
 
       <ToolBar
@@ -45,20 +43,22 @@ export default function DesktopShell() {
       />
 
       <div className="fixed inset-0 z-10 pointer-events-none">
-        {wm.openWindows.map((win) => (
-          <WindowFrame
-            key={win.id}
-            win={win}
-            onFocus={() => wm.focus(win.id)}
-            onClose={() => wm.close(win.id)}
-            onMinimize={() => wm.close(win.id)}
-            onMaximize={() => wm.toggleTile(win.id)}
-            onRectChange={(rect) => wm.setRect(win.id, rect)}
-            onHoverChange={(hovered) =>
-              setHoveredId(hovered ? win.id : null)
-            }
-          />
-        ))}
+        <AnimatePresence>
+          {wm.openWindows.map((win) => (
+            <WindowFrame
+              key={win.id}
+              win={win}
+              onFocus={() => wm.focus(win.id)}
+              onClose={() => wm.close(win.id)}
+              onMinimize={() => wm.close(win.id)}
+              onMaximize={() => wm.toggleTile(win.id)}
+              onRectChange={(rect) => wm.setRect(win.id, rect)}
+              onHoverChange={(hovered) =>
+                setHoveredId(hovered ? win.id : null)
+              }
+            />
+          ))}
+        </AnimatePresence>
       </div>
 
       <Dock

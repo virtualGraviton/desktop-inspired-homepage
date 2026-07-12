@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { motion } from 'framer-motion'
 import {
   Battery,
   Bell,
@@ -12,7 +13,7 @@ import {
   Moon,
   Wifi,
 } from 'lucide-react'
-import { TOOLBAR_RESERVED_H } from '../../desktop/constants'
+import { DESKTOP_EASE, TOOLBAR_RESERVED_H } from '../../desktop/constants'
 import type { RevealOrigin } from '../../desktop/useWallpaper'
 
 /** Shared chrome size for every toolbar control */
@@ -118,8 +119,11 @@ export default function ToolBar({
   })
 
   return (
-    <div
+    <motion.div
       className="fixed top-0 inset-x-0 z-[55] flex items-center justify-between gap-3 px-4 pointer-events-none"
+      initial={{ y: -72, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.75, ease: DESKTOP_EASE }}
       style={
         {
           height: TOOLBAR_RESERVED_H,
@@ -266,6 +270,6 @@ export default function ToolBar({
           </span>
         </Pill>
       </div>
-    </div>
+    </motion.div>
   )
 }
