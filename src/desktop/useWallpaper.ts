@@ -7,7 +7,9 @@ export interface RevealOrigin {
 }
 
 export function useWallpaper() {
-  const [index, setIndex] = useState(0)
+  const [index, setIndex] = useState(() =>
+    Math.floor(Math.random() * BACKGROUNDS.length),
+  )
   const [reveal, setReveal] = useState<{
     nextIndex: number
     origin: RevealOrigin
