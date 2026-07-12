@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { User, FolderGit2, PenLine, ExternalLink, Mail } from 'lucide-react'
 import { NAV_GROUPS, PROFILE, INK, SPACE } from '../../constants'
 import type { NavItem } from '../../types'
@@ -11,34 +11,64 @@ const iconMap: Record<string, React.ComponentType<{ size?: number }>> = {
   Mail,
 }
 
+const SIDEBAR_FULL = 280
+const SIDEBAR_COLLAPSED = 56
+
 interface SidebarProps {
   activeNav: NavItem
   onNavChange: (item: NavItem) => void
+  collapsed: boolean
+  /** Mount without entrance animation (login handoff). */
+  skipEnter?: boolean
 }
 
-export default function Sidebar({ activeNav, onNavChange }: SidebarProps) {
+export default function Sidebar({
+  activeNav,
+  onNavChange,
+  collapsed,
+  skipEnter = false,
+}: SidebarProps) {
+  /* When skipEnter, start at the target width to avoid jump */
+  const initialWidth = collapsed ? SIDEBAR_COLLAPSED : SIDEBAR_FULL
+
   return (
-    <aside
-      className="flex flex-col shrink-0 overflow-y-auto"
+    <motion.aside
+      layout
+      className="flex flex-col shrink-0 overflow-y-auto overflow-x-hidden"
+      initial={skipEnter ? { width: initialWidth } : false}
+      animate={{ width: collapsed ? SIDEBAR_COLLAPSED : SIDEBAR_FULL }}
+      transition={
+        skipEnter
+          ? { duration: 0 }
+          : { type: 'tween', ease: [0.16, 1, 0.3, 1], duration: 0.5 }
+      }
       style={{
-        width: 280,
-        paddingLeft: SPACE.lg,
-        paddingRight: SPACE.lg,
-        background: 'rgba(0,0,0,0.18)',
-        borderRight: '1px solid rgba(255,255,255,0.12)',
+        paddingLeft: collapsed ? 12 : SPACE.lg,
+        paddingRight: collapsed ? 12 : SPACE.lg,
+        background: 'var(--sidebar-bg)',
+        borderRight: '1px solid var(--sidebar-border)',
       }}
     >
-      <div
-        className="flex items-center gap-3"
+      {/* Profile header */}
+      <motion.div
+        layout
+        className="flex items-center"
         style={{
           paddingTop: SPACE.xl,
           paddingBottom: SPACE.lg,
-          borderBottom: '1px solid rgba(255,255,255,0.1)',
+          borderBottom: '1px solid var(--sidebar-divider)',
+          gap: collapsed ? 0 : 12,
+          justifyContent: collapsed ? 'center' : 'flex-start',
         }}
+        transition={
+          skipEnter
+            ? { duration: 0 }
+            : { type: 'tween', ease: [0.16, 1, 0.3, 1], duration: 0.5 }
+        }
       >
         <div
           className="rounded-full shrink-0 overflow-hidden ring-1 ring-white/25"
-          style={{ width: 48, height: 48 }}
+          style={{ width: collapsed ? 32 : 48, height: collapsed ? 32 : 48 }}
         >
           <img
             src={PROFILE.avatar}
@@ -47,72 +77,134 @@ export default function Sidebar({ activeNav, onNavChange }: SidebarProps) {
             draggable={false}
           />
         </div>
-        <div className="flex flex-col min-w-0" style={{ gap: SPACE.xs }}>
-          <span
-            className="font-semibold text-sm truncate"
-            style={{ color: INK.primary }}
-          >
-            {PROFILE.name}
-          </span>
-          <span className="text-xs truncate" style={{ color: INK.muted }}>
-            {PROFILE.title}
-          </span>
-        </div>
-      </div>
 
+        <AnimatePresence>
+          {!collapsed && (
+            <motion.div
+              className="flex flex-col min-w-0"
+              style={{ gap: SPACE.xs }}
+              initial={skipEnter ? false : { opacity: 0, width: 0 }}
+              animate={{ opacity: 1, width: 'auto' }}
+              exit={{ opacity: 0, width: 0 }}
+              transition={{ duration: skipEnter ? 0 : 0.25 }}
+            >
+              <span
+                className="font-semibold text-sm truncate"
+                style={{ color: INK.primary }}
+              >
+                {PROFILE.name}
+              </span>
+              <span className="text-xs truncate" style={{ color: INK.muted }}>
+                {PROFILE.title}
+              </span>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
+
+      {/* Navigation */}
       <nav
         className="flex flex-col flex-1"
         style={{
           paddingTop: SPACE.lg,
           paddingBottom: SPACE.md,
-          gap: SPACE.lg,
+          gap: collapsed ? 4 : SPACE.lg,
         }}
       >
         {NAV_GROUPS.map((group) => (
           <div key={group.label} className="flex flex-col" style={{ gap: 4 }}>
-            <span
-              className="text-[10px] font-semibold uppercase tracking-[0.14em]"
-              style={{
-                color: INK.faint,
-                marginBottom: 6,
-                paddingLeft: 12,
-              }}
-            >
-              {group.label}
-            </span>
+            <AnimatePresence>
+              {!collapsed && (
+                <motion.span
+                  className="text-[10px] font-semibold uppercase tracking-[0.14em]"
+                  style={{
+                    color: INK.faint,
+                    marginBottom: 6,
+                    paddingLeft: 12,
+                  }}
+                  initial={skipEnter ? false : { opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: skipEnter ? 0 : 0.2 }}
+                >
+                  {group.label}
+                </motion.span>
+              )}
+            </AnimatePresence>
+
             {group.items.map((item) => {
               const Icon = iconMap[item.icon]
               const isActive = activeNav === item.id
-              const activeBg = 'rgba(255,255,255,0.12)'
-              const idleBg = 'rgba(255,255,255,0)'
-              const hoverBg = 'rgba(255,255,255,0.06)'
 
               return (
                 <motion.button
                   key={item.id}
+                  type="button"
                   onClick={() => onNavChange(item.id)}
-                  className="flex items-center gap-3 rounded-xl text-sm cursor-pointer w-full text-left"
+                  data-active={isActive ? 'true' : undefined}
+                  className="sidebar-nav-item flex items-center rounded-xl text-sm cursor-pointer shrink-0 relative group"
                   style={{
                     height: 40,
-                    paddingLeft: 12,
-                    paddingRight: 12,
+                    paddingLeft: collapsed ? 0 : 12,
+                    paddingRight: collapsed ? 0 : 12,
                     color: isActive ? INK.primary : INK.secondary,
+                    justifyContent: collapsed ? 'center' : 'flex-start',
+                    width: collapsed ? 32 : '100%',
+                    marginLeft: collapsed ? 'auto' : 0,
+                    marginRight: collapsed ? 'auto' : 0,
                   }}
-                  // Framer must own backgroundColor via animate; mixing style.background
-                  // with whileHover.backgroundColor leaves a stale inline value after hover.
-                  initial={false}
+                  initial={
+                    skipEnter
+                      ? false
+                      : {
+                          borderRadius: collapsed ? 8 : 12,
+                        }
+                  }
+                  whileHover={collapsed ? {} : { x: 3 }}
                   animate={{
-                    backgroundColor: isActive ? activeBg : idleBg,
+                    borderRadius: collapsed ? 8 : 12,
                     x: 0,
                   }}
-                  whileHover={{
-                    x: 3,
-                    backgroundColor: isActive ? activeBg : hoverBg,
-                  }}
-                  transition={{ type: 'spring', stiffness: 300, damping: 22 }}
+                  transition={
+                    skipEnter
+                      ? { duration: 0 }
+                      : {
+                          type: 'spring',
+                          stiffness: 300,
+                          damping: 22,
+                        }
+                  }
                 >
                   {Icon && <Icon size={17} />}
-                  <span className="font-medium">{item.label}</span>
+                  <AnimatePresence>
+                    {!collapsed && (
+                      <motion.span
+                        className="font-medium ml-3"
+                        initial={skipEnter ? false : { opacity: 0, width: 0 }}
+                        animate={{ opacity: 1, width: 'auto' }}
+                        exit={{ opacity: 0, width: 0 }}
+                        transition={{ duration: skipEnter ? 0 : 0.2 }}
+                      >
+                        {item.label}
+                      </motion.span>
+                    )}
+                  </AnimatePresence>
+
+                  {/* Tooltip in collapsed mode */}
+                  {collapsed && (
+                    <span
+                      className="pointer-events-none fixed z-50 px-2.5 py-1 rounded-lg text-[11px] font-medium whitespace-nowrap opacity-0 group-hover:opacity-100"
+                      style={{
+                        background: 'rgba(10,10,14,0.92)',
+                        color: 'rgba(244,244,245,0.95)',
+                        border: '1px solid rgba(255,255,255,0.15)',
+                        backdropFilter: 'blur(8px)',
+                        transition: 'opacity 0.15s ease',
+                      }}
+                    >
+                      {item.label}
+                    </span>
+                  )}
                 </motion.button>
               )
             })}
@@ -120,28 +212,37 @@ export default function Sidebar({ activeNav, onNavChange }: SidebarProps) {
         ))}
       </nav>
 
-      <div
-        className="mt-auto font-mono text-[11px] leading-relaxed"
-        style={{
-          color: INK.muted,
-          paddingTop: SPACE.md,
-          paddingBottom: SPACE.lg,
-          borderTop: '1px solid rgba(255,255,255,0.1)',
-        }}
-      >
-        <div
-          className="flex items-center gap-2"
-          style={{ marginBottom: SPACE.sm }}
-        >
-          <span
-            className="inline-block rounded-full"
-            style={{ width: 7, height: 7, background: '#34d399' }}
-          />
-          <span style={{ color: INK.secondary }}>Online</span>
-        </div>
-        <div>CN · UTC+8</div>
-        <div style={{ color: INK.faint }}>homepage v0.1</div>
-      </div>
-    </aside>
+      {/* Footer — hidden when collapsed */}
+      <AnimatePresence>
+        {!collapsed && (
+          <motion.div
+            className="mt-auto font-mono text-[11px] leading-relaxed"
+            style={{
+              color: INK.muted,
+              paddingTop: SPACE.md,
+              paddingBottom: SPACE.lg,
+              borderTop: '1px solid var(--sidebar-divider)',
+            }}
+            initial={skipEnter ? false : { opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: skipEnter ? 0 : 0.25 }}
+          >
+            <div
+              className="flex items-center gap-2"
+              style={{ marginBottom: SPACE.sm }}
+            >
+              <span
+                className="inline-block rounded-full"
+                style={{ width: 7, height: 7, background: '#34d399' }}
+              />
+              <span style={{ color: INK.secondary }}>Online</span>
+            </div>
+            <div>CN / UTC+8</div>
+            <div style={{ color: INK.faint }}>homepage v0.1</div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.aside>
   )
 }

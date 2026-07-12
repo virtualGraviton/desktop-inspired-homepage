@@ -13,14 +13,17 @@ export const PROFILE = {
   bio: 'Focused on elegant, performant interfaces and reliable systems — clean architecture, thoughtful interaction, and just enough craft to make complexity disappear.',
 } as const
 
-/** Login wallpaper set — kebab-case WebP under /public/backgrounds */
+/** Login wallpaper set */
 export const BACKGROUNDS = [
   '/backgrounds/ayaka.webp',
   '/backgrounds/mashiro.webp',
-  '/backgrounds/neuro.webp',
-  '/backgrounds/anime-girl-6.webp',
-  '/backgrounds/anime-girl-7.webp',
-  '/backgrounds/anime-girl-8.webp',
+  '/backgrounds/100664563_p0.webp',
+  '/backgrounds/44873217_p0.webp',
+  '/backgrounds/80147951_p0.webp',
+  '/backgrounds/140944633_p0.webp',
+  '/backgrounds/141365252_p0.webp',
+  '/backgrounds/142323952_p0.webp',
+  '/backgrounds/143443847_p6.webp',
 ] as const
 
 export const NAV_GROUPS: { label: string; items: NavEntry[] }[] = [
@@ -75,14 +78,14 @@ export const TIMELINE = [
   },
 ]
 
-/** Solid text colors — avoid translucent white on glass */
+/** Solid text colors via theme CSS vars — avoid translucent white on glass */
 export const INK = {
-  primary: '#f4f4f5',
-  secondary: '#d4d4d8',
-  muted: '#a1a1aa',
-  faint: '#71717a',
-  accent: '#93c5fd',
-  accentSoft: '#bfdbfe',
+  primary: 'var(--ink-primary)',
+  secondary: 'var(--ink-secondary)',
+  muted: 'var(--ink-muted)',
+  faint: 'var(--ink-faint)',
+  accent: 'var(--ink-accent)',
+  accentSoft: 'var(--ink-accent-soft)',
 } as const
 
 /** 8pt spacing system */
