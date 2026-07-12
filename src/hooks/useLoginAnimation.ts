@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect } from 'react'
 import type { AnimationPhase } from '../types'
 
 const MORPH_MS = 500
-const LOADING_DISPLAY_MS = 2200
+const LOADING_DISPLAY_MS = 1200
 
 export function useLoginAnimation() {
   const [phase, setPhase] = useState<AnimationPhase>('boot')
