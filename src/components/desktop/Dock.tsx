@@ -10,7 +10,6 @@ interface DockProps {
 }
 
 const ICON = 44
-const DOT = 5
 const PAD_Y = 12
 const PAD_X = 18
 /** Fixed slot: icon + gap under icon for the indicator (never shifts layout) */
