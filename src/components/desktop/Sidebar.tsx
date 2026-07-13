@@ -152,27 +152,14 @@ export default function Sidebar({
                     width: collapsed ? 32 : '100%',
                     marginLeft: collapsed ? 'auto' : 0,
                     marginRight: collapsed ? 'auto' : 0,
-                  }}
-                  initial={
-                    skipEnter
-                      ? false
-                      : {
-                          borderRadius: collapsed ? 8 : 12,
-                        }
-                  }
-                  whileHover={collapsed ? {} : { x: 3 }}
-                  animate={{
                     borderRadius: collapsed ? 8 : 12,
-                    x: 0,
                   }}
+                  initial={false}
+                  whileHover={{ x: 3, transition: { type: 'spring', stiffness: 300, damping: 35 } }}
                   transition={
                     skipEnter
                       ? { duration: 0 }
-                      : {
-                          type: 'spring',
-                          stiffness: 300,
-                          damping: 22,
-                        }
+                      : { type: 'spring', stiffness: 300, damping: 35 }
                   }
                 >
                   {Icon && <Icon size={17} />}

@@ -9,40 +9,33 @@ interface ContentAreaProps {
 
 const pageTransition = {
   type: 'spring' as const,
-  duration: 0.45,
   stiffness: 160,
+  damping: 26,
 }
 
 export default function ContentArea({ activeNav }: ContentAreaProps) {
-  // initial={false}: skip enter on first mount (login handoff remount).
-  // Nav switches still get enter/exit via AnimatePresence.
   return (
-    <AnimatePresence mode="wait" initial={false}>
-      {activeNav !== 'about' ? (
-        <motion.div
-          key={activeNav}
-          className="flex-1 min-h-0 flex items-center justify-center"
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -8 }}
-          transition={pageTransition}
-        >
+    <AnimatePresence mode="popLayout" initial={false}>
+      <motion.div
+        key={activeNav}
+        className={
+          activeNav === 'about'
+            ? 'window-scroll flex-1 min-h-0 overflow-y-auto'
+            : 'flex-1 min-h-0 flex items-center justify-center'
+        }
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -6 }}
+        transition={pageTransition}
+      >
+        {activeNav === 'about' ? (
+          <AboutPage />
+        ) : (
           <p className="text-lg font-medium" style={{ color: INK.muted }}>
             Coming soon
           </p>
-        </motion.div>
-      ) : (
-        <motion.div
-          key="about"
-          className="window-scroll flex-1 min-h-0 overflow-y-auto"
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -8 }}
-          transition={pageTransition}
-        >
-          <AboutPage />
-        </motion.div>
-      )}
+        )}
+      </motion.div>
     </AnimatePresence>
   )
 }
