@@ -90,11 +90,8 @@ export default function VolumeControl({
       {open && (
         <motion.div
           ref={ref}
-          className="absolute top-full right-0 z-50 w-[280px] border shadow-2xl origin-top"
+          className="absolute top-full right-0 z-50 w-[280px] border shadow-2xl origin-top mt-3.5 p-5 pb-[18px] rounded-[16px]"
           style={{
-            marginTop: 14,
-            padding: '20px 20px 18px',
-            borderRadius: 16,
             background: theme === 'light'
               ? 'rgba(255,255,255,0.96)'
               : 'rgba(12,12,16,0.94)',
@@ -107,16 +104,10 @@ export default function VolumeControl({
           exit={{ opacity: 0, y: -8, scale: 0.96 }}
           transition={{ duration: 0.28, ease: DESKTOP_EASE }}
         >
-          <div
-            className="flex items-center gap-3"
-            style={{ marginBottom: 14 }}
-          >
-            <VolumeIcon size={20} style={{ opacity: 0.65 }} />
+          <div className="flex items-center gap-3 mb-3.5">
+            <VolumeIcon size={20} className="opacity-[0.65]" />
             <span className="text-[13px] font-medium">Volume</span>
-            <span
-              className="ml-auto text-[13px] font-mono tabular-nums"
-              style={{ opacity: 0.55 }}
-            >
+            <span className="ml-auto text-[13px] font-mono tabular-nums opacity-[0.55]">
               {volume}%
             </span>
           </div>
@@ -124,8 +115,8 @@ export default function VolumeControl({
           {/* Slider track */}
           <div
             ref={trackRef}
-            className="relative h-2 w-full rounded-full cursor-pointer"
-            style={{ background: trackBg, marginBottom: 14 }}
+            className="relative h-2 w-full rounded-full cursor-pointer mb-3.5"
+            style={{ background: trackBg }}
             onPointerDown={(e) => {
               setDragging(true)
               updateFromClientX(e.clientX)
@@ -147,12 +138,9 @@ export default function VolumeControl({
             />
             {/* Thumb */}
             <div
-              className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 rounded-full shadow pointer-events-none"
+              className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 rounded-full shadow pointer-events-none w-3.5 h-3.5 bg-white"
               style={{
                 left: `${volume}%`,
-                width: 14,
-                height: 14,
-                background: '#fff',
                 boxShadow: '0 1px 4px rgba(0,0,0,0.3)',
                 opacity: dragging ? 1 : 0,
                 transition: dragging ? 'none' : 'opacity 0.15s ease',
@@ -161,7 +149,7 @@ export default function VolumeControl({
           </div>
 
           {/* Quick presets */}
-          <div className="flex justify-between gap-2" style={{ marginTop: 6 }}>
+          <div className="flex justify-between gap-2 mt-1.5">
             {[0, 25, 50, 75, 100].map((v) => (
               <button
                 key={v}

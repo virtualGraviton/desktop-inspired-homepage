@@ -87,11 +87,8 @@ export default function NowPlaying({ open, onClose, theme, triggerRef }: NowPlay
       {open && (
         <motion.div
           ref={ref}
-          className="absolute top-full left-0 z-50 w-[340px] border shadow-2xl origin-top"
+          className="absolute top-full left-0 z-50 w-[340px] border shadow-2xl origin-top mt-2.5 p-6 rounded-[16px]"
           style={{
-            marginTop: 10,
-            padding: 24,
-            borderRadius: 16,
             background: isLight
               ? 'rgba(255,255,255,0.96)'
               : 'rgba(12,12,16,0.94)',
@@ -106,12 +103,8 @@ export default function NowPlaying({ open, onClose, theme, triggerRef }: NowPlay
         >
           {/* Album art placeholder */}
           <div
-            className="mb-5 rounded-2xl overflow-hidden shadow-lg"
+            className="mb-5 rounded-2xl overflow-hidden shadow-lg w-[200px] h-[200px] mx-auto"
             style={{
-              width: 200,
-              height: 200,
-              marginLeft: 'auto',
-              marginRight: 'auto',
               background:
                 'linear-gradient(135deg, #4F8EF7 0%, #7C5CFF 50%, #a78bfa 100%)',
             }}
@@ -126,10 +119,7 @@ export default function NowPlaying({ open, onClose, theme, triggerRef }: NowPlay
             <h2 className="font-semibold text-[15px] leading-snug truncate">
               {MOCK_SONG.title}
             </h2>
-            <p
-              className="text-[13px] mt-0.5"
-              style={{ opacity: 0.55 }}
-            >
+            <p className="text-[13px] mt-0.5 opacity-[0.55]">
               {MOCK_SONG.artist} — {MOCK_SONG.album}
             </p>
           </div>
@@ -147,13 +137,12 @@ export default function NowPlaying({ open, onClose, theme, triggerRef }: NowPlay
               tabIndex={0}
             >
               <motion.div
-                className="absolute inset-y-0 left-0 rounded-full"
-                style={{ background: '#4F8EF7' }}
+                className="absolute inset-y-0 left-0 rounded-full bg-[#4F8EF7]"
                 animate={{ width: `${progress * 100}%` }}
                 transition={{ duration: 0.15 }}
               />
             </div>
-            <div className="flex justify-between mt-1.5 text-[11px]" style={{ opacity: 0.45 }}>
+            <div className="flex justify-between mt-1.5 text-[11px] opacity-[0.45]">
               <span>{formatTime(elapsed)}</span>
               <span>{formatTime(MOCK_SONG.duration)}</span>
             </div>
@@ -183,13 +172,7 @@ export default function NowPlaying({ open, onClose, theme, triggerRef }: NowPlay
             <button
               type="button"
               onClick={() => setPlaying((v) => !v)}
-              className="flex items-center justify-center rounded-full cursor-pointer transition-transform hover:scale-105"
-              style={{
-                width: 44,
-                height: 44,
-                background: '#4F8EF7',
-                color: '#fff',
-              }}
+              className="flex items-center justify-center rounded-full cursor-pointer transition-transform hover:scale-105 w-11 h-11 bg-[#4F8EF7] text-white"
               aria-label={playing ? 'Pause' : 'Play'}
             >
               {playing ? <Pause size={20} fill="currentColor" /> : <Play size={20} fill="currentColor" className="ml-0.5" />}

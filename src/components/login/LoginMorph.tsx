@@ -141,12 +141,10 @@ export default function LoginMorph({
             transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           >
             <div
-              className="font-bold tracking-tight leading-none"
+              className="font-bold tracking-tight leading-none text-[56px] mb-2"
               style={{
-                fontSize: 56,
                 color: 'rgba(255,255,255,0.92)',
                 textShadow: '0 2px 16px rgba(0,0,0,0.35)',
-                marginBottom: 8,
               }}
             >
               {timeStr}
@@ -231,35 +229,24 @@ export default function LoginMorph({
               {/* Name + Button — only in capsule state */}
               {isCapsule && (
                 <motion.div
-                  className="flex items-center w-full"
-                  style={{
-                    marginLeft: 14,
-                    gap: 14,
-                  }}
+                  className="flex items-center w-full ml-3.5 gap-3.5"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.4, delay: 0.25 }}
                 >
                   <span
-                    className="min-w-0 flex-1 text-white text-center truncate"
+                    className="min-w-0 flex-1 text-white text-center truncate text-lg leading-6 font-medium"
                     style={{
-                      fontSize: 18,
-                      lineHeight: '24px',
                       fontFamily: "'JetBrains Mono', monospace",
-                      fontWeight: 500,
                     }}
                   >
                     {displayed}
                     <span
                       data-typewriter-cursor
-                      className="inline-block align-baseline relative"
+                      className="inline-block align-baseline relative w-[9px] h-0.5 ml-0.5 opacity-100"
                       style={{
-                        width: 9,
-                        height: 2,
-                        marginLeft: 2,
                         top: 3,
                         background: 'rgba(255,255,255,0.7)',
-                        opacity: 1,
                       }}
                     />
                   </span>
