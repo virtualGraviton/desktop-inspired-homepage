@@ -124,7 +124,7 @@ export default function WindowFrame({
           onMinimize={onMinimize}
           onMaximize={onMaximize}
         />
-        <HomepageApp activeNav={activeNav} onNavChange={setActiveNav} skipEnter={skipEnterRef.current} />
+        <HomepageApp activeNav={activeNav} onNavChange={setActiveNav} skipEnter={skipEnter} />
       </div>
 
       {floating && <ResizeHandles onResizePointerDown={onResizePointerDown} />}

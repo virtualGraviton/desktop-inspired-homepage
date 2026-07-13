@@ -1,3 +1,4 @@
+import { useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { User, FolderGit2, PenLine, ExternalLink, Mail } from 'lucide-react'
 import { NAV_GROUPS, PROFILE, INK, SPACE } from '../../constants'
@@ -31,6 +32,12 @@ export default function Sidebar({
   /* When skipEnter, start at the target width to avoid jump */
   const initialWidth = collapsed ? SIDEBAR_COLLAPSED : SIDEBAR_FULL
 
+  // After initial mount, re-enable transitions for collapse/expand
+  const skipAnimRef = useRef(skipEnter)
+  useEffect(() => {
+    skipAnimRef.current = false
+  }, [])
+
   return (
     <motion.aside
       layout
@@ -38,7 +45,7 @@ export default function Sidebar({
       initial={skipEnter ? { width: initialWidth } : false}
       animate={{ width: collapsed ? SIDEBAR_COLLAPSED : SIDEBAR_FULL }}
       transition={
-        skipEnter
+        skipAnimRef.current
           ? { duration: 0 }
           : { type: 'tween', ease: [0.16, 1, 0.3, 1], duration: 0.5 }
       }
@@ -61,7 +68,7 @@ export default function Sidebar({
           justifyContent: collapsed ? 'center' : 'flex-start',
         }}
         transition={
-          skipEnter
+          skipAnimRef.current
             ? { duration: 0 }
             : { type: 'tween', ease: [0.16, 1, 0.3, 1], duration: 0.5 }
         }
@@ -86,7 +93,7 @@ export default function Sidebar({
               initial={skipEnter ? false : { opacity: 0, width: 0 }}
               animate={{ opacity: 1, width: 'auto' }}
               exit={{ opacity: 0, width: 0 }}
-              transition={{ duration: skipEnter ? 0 : 0.25 }}
+              transition={{ duration: skipAnimRef.current ? 0 : 0.25 }}
             >
               <span
                 className="font-semibold text-sm truncate"
@@ -125,7 +132,7 @@ export default function Sidebar({
                   initial={skipEnter ? false : { opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
                   exit={{ opacity: 0, height: 0 }}
-                  transition={{ duration: skipEnter ? 0 : 0.2 }}
+                  transition={{ duration: skipAnimRef.current ? 0 : 0.2 }}
                 >
                   {group.label}
                 </motion.span>
@@ -157,7 +164,7 @@ export default function Sidebar({
                   initial={false}
                   whileHover={{ x: 3, transition: { type: 'spring', stiffness: 300, damping: 35 } }}
                   transition={
-                    skipEnter
+                    skipAnimRef.current
                       ? { duration: 0 }
                       : { type: 'spring', stiffness: 300, damping: 35 }
                   }
@@ -170,7 +177,7 @@ export default function Sidebar({
                         initial={skipEnter ? false : { opacity: 0, width: 0 }}
                         animate={{ opacity: 1, width: 'auto' }}
                         exit={{ opacity: 0, width: 0 }}
-                        transition={{ duration: skipEnter ? 0 : 0.2 }}
+                        transition={{ duration: skipAnimRef.current ? 0 : 0.2 }}
                       >
                         {item.label}
                       </motion.span>
@@ -213,7 +220,7 @@ export default function Sidebar({
             initial={skipEnter ? false : { opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: skipEnter ? 0 : 0.25 }}
+            transition={{ duration: skipAnimRef.current ? 0 : 0.25 }}
           >
             <div
               className="flex items-center gap-2"
