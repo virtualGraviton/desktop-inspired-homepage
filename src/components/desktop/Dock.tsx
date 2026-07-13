@@ -39,8 +39,7 @@ export default function Dock({ open, focused, onToggle }: DockProps) {
 
   return (
     <motion.div
-      className="fixed left-1/2 z-[60] -translate-x-1/2 pointer-events-auto"
-      style={{ bottom: 14 }}
+      className="fixed left-1/2 z-[60] -translate-x-1/2 pointer-events-auto bottom-3.5"
       onMouseEnter={onEnter}
       onMouseLeave={onLeave}
       initial={{ y: 96, opacity: 0 }}
@@ -66,14 +65,10 @@ export default function Dock({ open, focused, onToggle }: DockProps) {
       >
         {/* Collapsed peeker — true center (left 50% + translate), not inset-x + mx-auto */}
         <motion.div
-          className="absolute rounded-full pointer-events-none"
+          className="absolute rounded-full pointer-events-none w-8 h-[3px] -ml-4 -mt-[1.5px]"
           style={{
             left: '50%',
             top: '50%',
-            width: 32,
-            height: 3,
-            marginLeft: -16,
-            marginTop: -1.5,
             background: 'var(--dock-peeker)',
           }}
           initial={false}
@@ -85,10 +80,8 @@ export default function Dock({ open, focused, onToggle }: DockProps) {
           type="button"
           onClick={onToggle}
           title={HOMEPAGE_APP.name}
-          className="relative flex items-start justify-center cursor-pointer bg-transparent border-0 p-0 shrink-0"
+          className="relative flex items-start justify-center cursor-pointer bg-transparent border-0 p-0 shrink-0 w-11 h-[54px]"
           style={{
-            width: ICON,
-            height: SLOT_H,
             pointerEvents: expanded ? 'auto' : 'none',
           }}
           initial={false}
@@ -102,10 +95,8 @@ export default function Dock({ open, focused, onToggle }: DockProps) {
           aria-hidden={!expanded}
         >
           <span
-            className="block overflow-hidden rounded-[12px] ring-1 ring-white/20 shrink-0 transition-transform duration-200"
+            className="block overflow-hidden rounded-[12px] ring-1 ring-white/20 shrink-0 transition-transform duration-200 w-11 h-11"
             style={{
-              width: ICON,
-              height: ICON,
               transform: focused && open ? 'scale(1.04)' : 'scale(1)',
             }}
           >
@@ -118,12 +109,8 @@ export default function Dock({ open, focused, onToggle }: DockProps) {
           </span>
           {/* Indicator sits in reserved slot — no layout shift when open */}
           <span
-            className="absolute left-1/2 -translate-x-1/2 rounded-full transition-opacity duration-200"
+            className="absolute left-1/2 -translate-x-1/2 rounded-full transition-opacity duration-200 bottom-0 w-[5px] h-[5px] bg-[#93c5fd]"
             style={{
-              bottom: 0,
-              width: DOT,
-              height: DOT,
-              background: '#93c5fd',
               opacity: open ? 1 : 0,
             }}
           />

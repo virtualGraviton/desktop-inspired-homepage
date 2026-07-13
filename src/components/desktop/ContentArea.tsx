@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { MapPin, Calendar } from 'lucide-react'
-import { PROFILE, SKILLS, TIMELINE, INK, SPACE } from '../../constants'
+import { PROFILE, SKILLS, TIMELINE, INK } from '../../constants'
 import type { NavItem } from '../../types'
 
 interface ContentAreaProps {
@@ -43,21 +43,14 @@ export default function ContentArea({ activeNav }: ContentAreaProps) {
 function AboutPage() {
   return (
     <div
-      className="mx-auto w-full max-w-[880px]"
-      style={{
-        padding: `${SPACE.pageY}px ${SPACE.pageX}px`,
-        // Extra bottom room so the last section clears the rounded corner
-        paddingBottom: SPACE.pageY + 8,
-      }}
+      className="mx-auto w-full max-w-[880px] py-[32px] px-[40px] pb-[40px]"
     >
       {/* Hero */}
       <header
-        className="flex items-start"
-        style={{ gap: SPACE.lg, marginBottom: SPACE.section }}
+        className="flex items-start gap-6 mb-12"
       >
         <div
-          className="rounded-[28px] shrink-0 overflow-hidden ring-1 ring-white/20 shadow-lg"
-          style={{ width: 104, height: 104 }}
+          className="rounded-[28px] shrink-0 overflow-hidden ring-1 ring-white/20 shadow-lg w-[104px] h-[104px]"
         >
           <img
             src={PROFILE.avatar}
@@ -67,21 +60,18 @@ function AboutPage() {
           />
         </div>
 
-        <div className="min-w-0" style={{ paddingTop: SPACE.xs }}>
+        <div className="min-w-0 pt-1">
           <h1
-            className="font-bold tracking-tight"
+            className="font-bold tracking-tight text-[40px] leading-[1.15] mb-3"
             style={{
               color: INK.primary,
-              fontSize: 40,
-              lineHeight: 1.15,
-              marginBottom: 12,
             }}
           >
             {PROFILE.name}
           </h1>
           <p
-            className="text-lg"
-            style={{ color: INK.secondary, marginBottom: 10 }}
+            className="text-lg mb-2.5"
+            style={{ color: INK.secondary }}
           >
             {PROFILE.title}
           </p>
@@ -102,10 +92,10 @@ function AboutPage() {
       </header>
 
       {/* Slogan + bio */}
-      <section style={{ marginBottom: SPACE.section }}>
+      <section className="mb-12">
         <p
-          className="text-xl font-medium leading-snug"
-          style={{ color: INK.primary, marginBottom: SPACE.md }}
+          className="text-xl font-medium leading-snug mb-4"
+          style={{ color: INK.primary }}
         >
           {PROFILE.slogan}
         </p>
@@ -118,21 +108,19 @@ function AboutPage() {
       </section>
 
       {/* Skills */}
-      <section style={{ marginBottom: SPACE.section }}>
+      <section className="mb-12">
         <h2
-          className="text-xs font-semibold uppercase tracking-[0.16em]"
-          style={{ color: INK.muted, marginBottom: SPACE.md }}
+          className="text-xs font-semibold uppercase tracking-[0.16em] mb-4"
+          style={{ color: INK.muted }}
         >
           Tech Stack
         </h2>
-        <div className="flex flex-wrap" style={{ gap: 12 }}>
+        <div className="flex flex-wrap gap-3">
           {SKILLS.map((skill) => (
             <motion.span
               key={skill}
-              className="inline-flex items-center rounded-lg text-sm font-medium cursor-default"
+              className="inline-flex items-center rounded-lg text-sm font-medium cursor-default h-8 px-4"
               style={{
-                height: 32,
-                padding: '0 16px',
                 background: 'var(--skill-bg)',
                 color: INK.accentSoft,
                 border: '1px solid var(--skill-border)',
@@ -149,26 +137,22 @@ function AboutPage() {
       {/* Experience cards */}
       <section>
         <h2
-          className="text-xs font-semibold uppercase tracking-[0.16em]"
-          style={{ color: INK.muted, marginBottom: SPACE.md }}
+          className="text-xs font-semibold uppercase tracking-[0.16em] mb-4"
+          style={{ color: INK.muted }}
         >
           Experience
         </h2>
         <div
-          className="grid"
+          className="grid gap-6"
           style={{
-            gap: SPACE.lg,
             gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
           }}
         >
           {TIMELINE.map((item) => (
             <article
               key={item.title}
-              className="rounded-2xl flex flex-col"
+              className="rounded-2xl flex flex-col min-h-[200px] p-6 gap-2"
               style={{
-                minHeight: 200,
-                padding: SPACE.lg,
-                gap: SPACE.sm,
                 background: 'var(--surface-card)',
                 border: '1px solid var(--surface-card-border)',
               }}
@@ -186,8 +170,8 @@ function AboutPage() {
                 {item.company}
               </p>
               <p
-                className="text-sm leading-relaxed"
-                style={{ color: INK.secondary, marginTop: 'auto' }}
+                className="text-sm leading-relaxed mt-auto"
+                style={{ color: INK.secondary }}
               >
                 {item.description}
               </p>

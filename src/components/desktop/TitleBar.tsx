@@ -20,11 +20,8 @@ export default function TitleBar({
 }: TitleBarProps) {
   return (
     <div
-      className="relative flex items-center shrink-0 select-none"
+      className="relative flex items-center shrink-0 select-none h-11 pl-6 pr-4"
       style={{
-        height: 44,
-        paddingLeft: 24,
-        paddingRight: 16,
         borderBottom: '1px solid var(--titlebar-border)',
         cursor: onDragPointerDown ? 'grab' : 'default',
         touchAction: onDragPointerDown ? 'none' : undefined,
@@ -38,22 +35,19 @@ export default function TitleBar({
       >
         <button
           type="button"
-          className="inline-block rounded-full border-0 p-0 cursor-pointer"
-          style={{ width: 12, height: 12, background: '#ff5f57' }}
+          className="inline-block rounded-full border-0 p-0 cursor-pointer w-3 h-3 bg-[#ff5f57]"
           title="Close"
           onClick={onClose}
         />
         <button
           type="button"
-          className="inline-block rounded-full border-0 p-0 cursor-pointer"
-          style={{ width: 12, height: 12, background: '#febc2e' }}
+          className="inline-block rounded-full border-0 p-0 cursor-pointer w-3 h-3 bg-[#febc2e]"
           title="Minimize"
           onClick={onMinimize}
         />
         <button
           type="button"
-          className="inline-block rounded-full border-0 p-0 cursor-pointer"
-          style={{ width: 12, height: 12, background: '#28c840' }}
+          className="inline-block rounded-full border-0 p-0 cursor-pointer w-3 h-3 bg-[#28c840]"
           title="Maximize / Tile"
           onClick={onMaximize}
         />

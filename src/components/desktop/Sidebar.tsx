@@ -59,14 +59,12 @@ export default function Sidebar({
       {/* Profile header */}
       <motion.div
         layout
-        className="flex items-center"
-        style={{
-          paddingTop: SPACE.xl,
-          paddingBottom: SPACE.lg,
-          borderBottom: '1px solid var(--sidebar-divider)',
-          gap: collapsed ? 0 : 12,
-          justifyContent: collapsed ? 'center' : 'flex-start',
-        }}
+        className="flex items-center pt-8 pb-6"
+          style={{
+            borderBottom: '1px solid var(--sidebar-divider)',
+            gap: collapsed ? 0 : 12,
+            justifyContent: collapsed ? 'center' : 'flex-start',
+          }}
         transition={
           skipAnimRef.current
             ? { duration: 0 }
@@ -111,23 +109,19 @@ export default function Sidebar({
 
       {/* Navigation */}
       <nav
-        className="flex flex-col flex-1"
+        className="flex flex-col flex-1 pt-6 pb-4"
         style={{
-          paddingTop: SPACE.lg,
-          paddingBottom: SPACE.md,
           gap: collapsed ? 4 : SPACE.lg,
         }}
       >
         {NAV_GROUPS.map((group) => (
-          <div key={group.label} className="flex flex-col" style={{ gap: 4 }}>
+          <div key={group.label} className="flex flex-col gap-1">
             <AnimatePresence>
               {!collapsed && (
                 <motion.span
-                  className="text-[10px] font-semibold uppercase tracking-[0.14em]"
+                  className="text-[10px] font-semibold uppercase tracking-[0.14em] mb-1.5 pl-3"
                   style={{
                     color: INK.faint,
-                    marginBottom: 6,
-                    paddingLeft: 12,
                   }}
                   initial={skipEnter ? false : { opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
@@ -149,9 +143,8 @@ export default function Sidebar({
                   type="button"
                   onClick={() => onNavChange(item.id)}
                   data-active={isActive ? 'true' : undefined}
-                  className="sidebar-nav-item flex items-center rounded-xl text-sm cursor-pointer shrink-0 relative group"
+                  className="sidebar-nav-item flex items-center rounded-xl text-sm cursor-pointer shrink-0 relative group h-10"
                   style={{
-                    height: 40,
                     paddingLeft: collapsed ? 0 : 12,
                     paddingRight: collapsed ? 0 : 12,
                     color: isActive ? INK.primary : INK.secondary,
@@ -173,7 +166,7 @@ export default function Sidebar({
                   <AnimatePresence>
                     {!collapsed && (
                       <motion.span
-                        className="font-medium ml-3"
+                        className="font-medium ml-2"
                         initial={skipEnter ? false : { opacity: 0, width: 0 }}
                         animate={{ opacity: 1, width: 'auto' }}
                         exit={{ opacity: 0, width: 0 }}
@@ -210,11 +203,9 @@ export default function Sidebar({
       <AnimatePresence>
         {!collapsed && (
           <motion.div
-            className="mt-auto font-mono text-[11px] leading-relaxed"
+            className="mt-auto font-mono text-[11px] leading-relaxed pt-4 pb-6"
             style={{
               color: INK.muted,
-              paddingTop: SPACE.md,
-              paddingBottom: SPACE.lg,
               borderTop: '1px solid var(--sidebar-divider)',
             }}
             initial={skipEnter ? false : { opacity: 0, height: 0 }}
@@ -222,14 +213,8 @@ export default function Sidebar({
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: skipAnimRef.current ? 0 : 0.25 }}
           >
-            <div
-              className="flex items-center gap-2"
-              style={{ marginBottom: SPACE.sm }}
-            >
-              <span
-                className="inline-block rounded-full"
-                style={{ width: 7, height: 7, background: '#34d399' }}
-              />
+            <div className="flex items-center gap-2 mb-2">
+              <span className="inline-block rounded-full w-[7px] h-[7px] bg-[#34d399]" />
               <span style={{ color: INK.secondary }}>Online</span>
             </div>
             <div>CN / UTC+8</div>
