@@ -49,15 +49,35 @@ export default function WindowFrame({
   const prevMode = useRef(win.mode)
   const modeChanged = prevMode.current !== win.mode
   const [layoutTween, setLayoutTween] = useState(false)
-  const sizeDuration = modeChanged || layoutTween ? LAYOUT_MS / 1000 : 0
+  const userDragging = useRef(false)
+  const sizeDuration =
+    modeChanged || (layoutTween && !userDragging.current) ? LAYOUT_MS / 1000 : 0
 
   useLayoutEffect(() => {
     if (!modeChanged) return
     prevMode.current = win.mode
+    userDragging.current = false
     setLayoutTween(true)
     const t = window.setTimeout(() => setLayoutTween(false), LAYOUT_MS + 30)
     return () => window.clearTimeout(t)
   }, [modeChanged, win.mode])
+
+  // When rect changes for any reason other than a mode change (i.e.
+  // the user is dragging or resizing), kill the layout tween so
+  // subsequent pointer-move updates are instant instead of fighting
+  // a 450 ms Framer transition.
+  const prevRect = useRef(win.rect)
+  useLayoutEffect(() => {
+    const p = prevRect.current
+    const n = win.rect
+    prevRect.current = n
+    if (p.x === n.x && p.y === n.y && p.width === n.width && p.height === n.height)
+      return
+    if (!modeChanged && layoutTween) {
+      setLayoutTween(false)
+      userDragging.current = true
+    }
+  })
 
   return (
     <motion.div
